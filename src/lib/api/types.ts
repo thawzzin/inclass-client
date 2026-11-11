@@ -92,6 +92,19 @@ export interface AttendanceRecord {
   updatedAt: string;
 }
 
+export interface AttendanceRosterEntry {
+  id: string;
+  attendanceSessionId: string;
+  studentId: string;
+  student: Student;
+  attendanceRecord: AttendanceRecord | null;
+}
+
+export interface AttendanceSessionDetail extends AttendanceSession {
+  section: Omit<Section, 'course' | 'teacher'>;
+  roster: AttendanceRosterEntry[];
+}
+
 export interface AttendanceStatistics {
   totalExpected: number;
   present: number;

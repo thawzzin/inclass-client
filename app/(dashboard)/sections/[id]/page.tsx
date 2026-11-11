@@ -1,10 +1,9 @@
-'use client';
-
-import { useParams } from 'next/navigation';
-
 import { SectionDetail } from '@/src/features/academics/section-detail';
 
-export default function SectionDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  return <SectionDetail id={id} />;
+export default async function SectionDetailPage({
+  params,
+  searchParams,
+}: PageProps<'/sections/[id]'>) {
+  const [{ id }, query] = await Promise.all([params, searchParams]);
+  return <SectionDetail id={id} initialTab={query.tab === 'attendance' ? 'attendance' : 'overview'} />;
 }

@@ -153,7 +153,7 @@ students into a roster; later enrollment changes do not alter that roster.
 | GET | `/sections/:id/attendance-sessions` | ADMIN, or assigned TEACHER. Returns sessions ordered by descending date. |
 | POST | `/sections/:id/attendance-sessions` | Authorized user + CSRF; `{ date: 'YYYY-MM-DD' }`; `201`. |
 | GET | `/attendance-sessions/:id` | Authorized user. Returns the session, section, captured roster, each student, and any existing attendance record. |
-| POST | `/attendance-sessions/:id/records/bulk` | Authorized user + CSRF; `{ records: [{ studentId: UUID, status: AttendanceStatus }] }`; at least one unique student. Creates only absent records; `409` if any submitted record already exists. |
+| POST | `/attendance-sessions/:id/records/bulk` | Authorized user + CSRF; `{ records: [{ studentId: UUID, status: AttendanceStatus }] }`; at least one unique student. Creates records only for students without an existing record; `409` if any submitted record already exists. |
 | PATCH | `/attendance-sessions/:id/records/:studentId` | Authorized user + CSRF; `{ status: AttendanceStatus }`. Returns `{}`; `404` if no existing record exists. |
 | POST | `/attendance-sessions/:id/records/mark-all-present` | Authorized user + CSRF; no body. Returns `{ marked: number }`; does not replace existing ABSENT or LATE records. |
 | GET | `/attendance-records` | Authorized user. Optional `sectionId`, `dateFrom`, `dateTo`, `status`, `page`, `pageSize`; returns `Paginated<AttendanceRecord>`. Add `format=csv` for CSV download. Teachers receive only assigned-section data. |

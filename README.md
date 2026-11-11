@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# InClass Client
 
-## Getting Started
+InClass is the responsive administration frontend for the InClass university attendance system. It supports administrator and teacher workflows for students, teachers, courses, sections, enrollments, daily attendance, history, reports, and role-specific dashboards.
 
-First, run the development server:
+The application is a Next.js App Router project written in strict TypeScript. It integrates with the existing Express API in the sibling `inclass-backend` repository; it does not provide or mock backend behavior at runtime.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Requirements
+
+- Node.js 24.11 or newer (the shared requirement of the frontend and backend repositories)
+- pnpm 10.27 or newer
+- A configured and migrated InClass backend
+
+## Local setup
+
+1. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+2. Create the frontend environment file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Confirm that `NEXT_PUBLIC_API_URL` points to the backend API prefix. The default is:
+
+   ```dotenv
+   NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
+   ```
+
+4. Configure and start `../inclass-backend` by following its README. Its `FRONTEND_URL` must exactly match the frontend origin (normally `http://localhost:3000`) so credentialed CORS and authentication cookies work.
+
+5. Start the frontend:
+
+   ```bash
+   pnpm dev
+   ```
+
+Open [http://localhost:3000](http://localhost:3000). The API health endpoint is [http://localhost:4000/api/v1/health](http://localhost:4000/api/v1/health).
+
+## Authentication and API integration
+
+Authentication uses backend-issued HttpOnly access and refresh cookies. The Axios client sends credentials, obtains the backend CSRF token before writes, performs one coordinated refresh attempt after an expired access session, and never stores tokens in browser storage.
+
+The implemented API contract, authorization rules, response envelopes, and known backend constraints are documented in [docs/API_INTEGRATION.md](docs/API_INTEGRATION.md). Backend routes and validation schemas remain the source of truth.
+
+## Project structure
+
+```text
+app/                    Next.js routes, layouts, and providers
+src/components/layout/ Shared authenticated application layout
+src/features/          Feature UI, API functions, hooks, and domain logic
+src/lib/api/           Central Axios client, errors, query keys, and API types
+src/lib/query/         TanStack Query client configuration
+tests/                 Shared Vitest setup
+docs/                  Verified integration documentation
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Static route layouts remain Server Components where practical. Interactive forms, authentication, and server-state features are isolated in Client Components.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quality checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run these before opening a pull request or deploying:
 
-## Learn More
+```bash
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
 
-To learn more about Next.js, take a look at the following resources:
+If the local environment prevents Turbopack from opening its internal build port, use the equivalent webpack production build gate:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm exec next build --webpack
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Tests use Vitest, React Testing Library, and verified backend-shaped fixtures. They do not require production data.
 
-## Deploy on Vercel
+## Production deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Set `NEXT_PUBLIC_API_URL` at build time to the public backend `/api/v1` URL.
+- Serve the frontend and backend over HTTPS.
+- Configure the backend `FRONTEND_URL` to the exact deployed frontend origin.
+- Configure backend production cookies and trusted-proxy behavior for the actual hosting topology.
+- Apply backend migrations before directing traffic to a new API release.
+- Run all frontend and backend quality gates in CI.
+- Verify login, refresh, logout, role access, CSRF-protected writes, attendance creation/update, and the duplicate-session conflict flow against a non-production database.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Never use production data for automated or manual acceptance testing.

@@ -14,7 +14,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
   }, [router, status]);
 
   if (status !== 'authenticated') {
-    return <main className="grid min-h-screen place-items-center text-sm text-zinc-500">Restoring session…</main>;
+    return (
+      <main className="grid min-h-screen place-items-center text-sm text-zinc-500">
+        Restoring session…
+      </main>
+    );
   }
 
   return <>{children}</>;

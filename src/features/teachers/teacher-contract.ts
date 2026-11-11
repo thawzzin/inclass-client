@@ -4,7 +4,10 @@ import type { EntityStatus } from '@/src/lib/api/types';
 
 const name = z.string().trim().min(1, 'Name is required.').max(120);
 const email = z.string().trim().email('Enter a valid email address.').max(320);
-const password = z.string().min(12, 'Password must be at least 12 characters.').max(128);
+const password = z
+  .string()
+  .min(12, 'Password must be at least 12 characters.')
+  .max(128);
 
 export const createTeacherSchema = z.object({ name, email, password });
 export const updateTeacherSchema = z.object({ name, email });

@@ -19,7 +19,8 @@ export async function submitAttendanceChanges(
     updates.map((record) => api.updateRecord(record)),
   );
   return {
-    failedUpdates: results.filter((result) => result.status === 'rejected').length,
+    failedUpdates: results.filter((result) => result.status === 'rejected')
+      .length,
   };
 }
 

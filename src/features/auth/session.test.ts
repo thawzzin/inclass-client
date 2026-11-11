@@ -24,7 +24,9 @@ describe('restoreSession', () => {
 
   it('refreshes once after an expired access session', async () => {
     const api: SessionApi = {
-      me: vi.fn().mockRejectedValue(new ApiError('Authentication is required', 401)),
+      me: vi
+        .fn()
+        .mockRejectedValue(new ApiError('Authentication is required', 401)),
       refresh: vi.fn().mockResolvedValue(teacher),
     };
 
@@ -34,8 +36,12 @@ describe('restoreSession', () => {
 
   it('returns no session when refresh is rejected', async () => {
     const api: SessionApi = {
-      me: vi.fn().mockRejectedValue(new ApiError('Authentication is required', 401)),
-      refresh: vi.fn().mockRejectedValue(new ApiError('Refresh session is required', 401)),
+      me: vi
+        .fn()
+        .mockRejectedValue(new ApiError('Authentication is required', 401)),
+      refresh: vi
+        .fn()
+        .mockRejectedValue(new ApiError('Refresh session is required', 401)),
     };
 
     await expect(restoreSession(api)).resolves.toBeNull();

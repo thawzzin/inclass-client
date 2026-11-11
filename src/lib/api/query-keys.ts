@@ -7,7 +7,8 @@ export const queryKeys = {
   students: {
     all: ['students'] as const,
     detail: (id: string) => ['students', id] as const,
-    attendance: (id: string, filters: object) => ['students', id, 'attendance', filters] as const,
+    attendance: (id: string, filters: object) =>
+      ['students', id, 'attendance', filters] as const,
   },
   teachers: {
     all: ['teachers'] as const,
@@ -21,7 +22,8 @@ export const queryKeys = {
     all: ['sections'] as const,
     detail: (id: string) => ['sections', id] as const,
     enrollments: (id: string) => ['sections', id, 'enrollments'] as const,
-    attendanceSessions: (id: string) => ['sections', id, 'attendance-sessions'] as const,
+    attendanceSessions: (id: string) =>
+      ['sections', id, 'attendance-sessions'] as const,
   },
   attendanceSessions: {
     detail: (id: string) => ['attendance-sessions', id] as const,
@@ -32,9 +34,13 @@ export const queryKeys = {
       ['sections', sectionId, 'attendance-statistics', filters] as const,
   },
   dashboard: {
-    summary: (role: Role | undefined) => ['dashboard', role, 'summary'] as const,
-    attendanceStats: (role: Role | undefined) => ['dashboard', role, 'attendance-stats'] as const,
-    recentAttendance: (role: Role | undefined) => ['dashboard', role, 'recent-attendance'] as const,
-    assignedSections: (role: Role | undefined) => ['dashboard', role, 'assigned-sections'] as const,
+    summary: (role: Role | undefined) =>
+      ['dashboard', role, 'summary'] as const,
+    attendanceStats: (role: Role | undefined) =>
+      ['dashboard', role, 'attendance-stats'] as const,
+    recentAttendance: (role: Role | undefined) =>
+      ['dashboard', role, 'recent-attendance'] as const,
+    assignedSections: (role: Role | undefined) =>
+      ['dashboard', role, 'assigned-sections'] as const,
   },
 };

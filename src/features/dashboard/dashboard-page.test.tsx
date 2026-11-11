@@ -50,8 +50,12 @@ describe('DashboardPage', () => {
   });
 
   it('shows a recoverable error instead of treating failed assigned sections as empty', async () => {
-    vi.mocked(academicsApi.sections).mockRejectedValue(new Error('network unavailable'));
-    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    vi.mocked(academicsApi.sections).mockRejectedValue(
+      new Error('network unavailable'),
+    );
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -59,7 +63,11 @@ describe('DashboardPage', () => {
       </QueryClientProvider>,
     );
 
-    expect(await screen.findByText('Unable to load assigned sections.')).toBeInTheDocument();
-    expect(screen.queryByText('No sections are assigned.')).not.toBeInTheDocument();
+    expect(
+      await screen.findByText('Unable to load assigned sections.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('No sections are assigned.'),
+    ).not.toBeInTheDocument();
   });
 });

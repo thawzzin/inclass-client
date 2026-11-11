@@ -7,7 +7,14 @@ export interface StudentQuery {
   status?: EntityStatus;
 }
 
-export function toStudentQuery(query: StudentQuery): Omit<StudentQuery, 'search'> & { search?: string } {
+export function toStudentQuery(
+  query: StudentQuery,
+): Omit<StudentQuery, 'search'> & { search?: string } {
   const search = query.search.trim();
-  return { page: query.page, pageSize: query.pageSize, ...(search ? { search } : {}), ...(query.status ? { status: query.status } : {}) };
+  return {
+    page: query.page,
+    pageSize: query.pageSize,
+    ...(search ? { search } : {}),
+    ...(query.status ? { status: query.status } : {}),
+  };
 }

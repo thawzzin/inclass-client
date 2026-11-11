@@ -69,11 +69,18 @@ function AttendanceEditor({
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [draft, setDraft] = useState(() => createAttendanceDraft(detail.roster));
-  const [baseline, setBaseline] = useState(() => createAttendanceDraft(detail.roster));
+  const [draft, setDraft] = useState(() =>
+    createAttendanceDraft(detail.roster),
+  );
+  const [baseline, setBaseline] = useState(() =>
+    createAttendanceDraft(detail.roster),
+  );
   const summary = attendanceSummary(draft);
   const dirty = useMemo(
-    () => detail.roster.some((entry) => draft[entry.studentId] !== baseline[entry.studentId]),
+    () =>
+      detail.roster.some(
+        (entry) => draft[entry.studentId] !== baseline[entry.studentId],
+      ),
     [baseline, detail.roster, draft],
   );
 
@@ -89,16 +96,27 @@ function AttendanceEditor({
   const save = useMutation({
     mutationFn: async () => {
       const changes = partitionAttendanceChanges(detail.roster, draft);
-      const result = await submitAttendanceChanges(changes.creates, changes.updates, {
-        createRecords: (records) => attendanceApi.createRecords(detail.id, records),
-        updateRecord: (record) =>
-          attendanceApi.updateRecord(detail.id, record.studentId, record.status),
-      });
+      const result = await submitAttendanceChanges(
+        changes.creates,
+        changes.updates,
+        {
+          createRecords: (records) =>
+            attendanceApi.createRecords(detail.id, records),
+          updateRecord: (record) =>
+            attendanceApi.updateRecord(
+              detail.id,
+              record.studentId,
+              record.status,
+            ),
+        },
+      );
       if (result.failedUpdates) {
         await queryClient.invalidateQueries({
           queryKey: queryKeys.attendanceSessions.detail(detail.id),
         });
-        throw new Error('Some existing attendance records could not be updated.');
+        throw new Error(
+          'Some existing attendance records could not be updated.',
+        );
       }
 
       await queryClient.invalidateQueries({
@@ -107,19 +125,29 @@ function AttendanceEditor({
       return attendanceApi.session(detail.id);
     },
     onSuccess: (refreshed) => {
-      queryClient.setQueryData(queryKeys.attendanceSessions.detail(detail.id), refreshed);
+      queryClient.setQueryData(
+        queryKeys.attendanceSessions.detail(detail.id),
+        refreshed,
+      );
       const savedDraft = createAttendanceDraft(refreshed.roster);
       setDraft(savedDraft);
       setBaseline(savedDraft);
       toast.success('Attendance saved.');
     },
     onError: () => {
-      toast.error('Attendance was not fully saved. Your selections are still shown; please retry.');
+      toast.error(
+        'Attendance was not fully saved. Your selections are still shown; please retry.',
+      );
     },
   });
 
   function leaveForSection() {
-    if (dirty && !window.confirm('You have unsaved attendance changes. Leave without saving?')) {
+    if (
+      dirty &&
+      !window.confirm(
+        'You have unsaved attendance changes. Leave without saving?',
+      )
+    ) {
       return;
     }
     router.push(`/sections/${section.id}`);
@@ -150,7 +178,9 @@ function AttendanceEditor({
           <button
             type="button"
             disabled={!summary.unmarked || save.isPending}
-            onClick={() => setDraft((current) => markAllUnmarkedPresent(current))}
+            onClick={() =>
+              setDraft((current) => markAllUnmarkedPresent(current))
+            }
             className="min-h-10 rounded-md border border-zinc-300 px-4 py-2 text-sm disabled:opacity-50 dark:border-zinc-700"
           >
             Mark all unmarked present
@@ -167,10 +197,17 @@ function AttendanceEditor({
         </div>
       </div>
 
-      <div className="h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800" aria-hidden="true">
+      <div
+        className="h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"
+        aria-hidden="true"
+      >
         <div
           className="h-full bg-zinc-950 transition-[width] dark:bg-zinc-50"
-          style={{ width: summary.total ? `${(summary.marked / summary.total) * 100}%` : '0%' }}
+          style={{
+            width: summary.total
+              ? `${(summary.marked / summary.total) * 100}%`
+              : '0%',
+          }}
         />
       </div>
       <p className="sr-only" aria-live="polite">
@@ -178,16 +215,35 @@ function AttendanceEditor({
       </p>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <SummaryCard label="Present" value={summary.present} icon={<Check className="size-4" />} />
-        <SummaryCard label="Absent" value={summary.absent} icon={<UserX className="size-4" />} />
-        <SummaryCard label="Late" value={summary.late} icon={<Clock3 className="size-4" />} />
-        <SummaryCard label="Unmarked" value={summary.unmarked} icon={<span aria-hidden="true">—</span>} />
+        <SummaryCard
+          label="Present"
+          value={summary.present}
+          icon={<Check className="size-4" />}
+        />
+        <SummaryCard
+          label="Absent"
+          value={summary.absent}
+          icon={<UserX className="size-4" />}
+        />
+        <SummaryCard
+          label="Late"
+          value={summary.late}
+          icon={<Clock3 className="size-4" />}
+        />
+        <SummaryCard
+          label="Unmarked"
+          value={summary.unmarked}
+          icon={<span aria-hidden="true">—</span>}
+        />
       </div>
 
       {detail.roster.length ? (
         <ul className="divide-y rounded-lg border border-zinc-200 dark:border-zinc-800">
           {detail.roster.map((entry) => (
-            <li key={entry.id} className="grid gap-3 p-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+            <li
+              key={entry.id}
+              className="grid gap-3 p-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center"
+            >
               <div className="min-w-0">
                 <p className="font-medium">{entry.student.fullName}</p>
                 <p className="text-sm text-zinc-500">
@@ -210,7 +266,10 @@ function AttendanceEditor({
                       aria-checked={selected}
                       disabled={save.isPending}
                       onClick={() =>
-                        setDraft((current) => ({ ...current, [entry.studentId]: status }))
+                        setDraft((current) => ({
+                          ...current,
+                          [entry.studentId]: status,
+                        }))
                       }
                       className={`min-h-10 rounded-md border px-3 py-2 text-xs font-medium sm:text-sm ${
                         selected

@@ -56,11 +56,17 @@ export function SectionAttendance({ sectionId }: { sectionId: string }) {
   });
 
   if (sessions.isLoading) {
-    return <p className="text-sm text-zinc-500">Loading attendance sessions…</p>;
+    return (
+      <p className="text-sm text-zinc-500">Loading attendance sessions…</p>
+    );
   }
   if (sessions.isError || !sessions.data) {
     return (
-      <button type="button" onClick={() => void sessions.refetch()} className="text-sm underline">
+      <button
+        type="button"
+        onClick={() => void sessions.refetch()}
+        className="text-sm underline"
+      >
         Unable to load attendance sessions. Retry
       </button>
     );
@@ -109,7 +115,8 @@ export function SectionAttendance({ sectionId }: { sectionId: string }) {
                 >
                   <span>{displayDate(session.date)}</span>
                   <span className="flex items-center gap-1 text-zinc-500">
-                    Open <ExternalLink className="size-3.5" aria-hidden="true" />
+                    Open{' '}
+                    <ExternalLink className="size-3.5" aria-hidden="true" />
                   </span>
                 </Link>
               </li>

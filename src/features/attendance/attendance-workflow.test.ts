@@ -3,7 +3,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { ApiError } from '@/src/lib/api/error';
 import type { AttendanceSession } from '@/src/lib/api/types';
 
-import { openOrCreateSession, submitAttendanceChanges } from './attendance-workflow';
+import {
+  openOrCreateSession,
+  submitAttendanceChanges,
+} from './attendance-workflow';
 
 const session: AttendanceSession = {
   id: 'session-1',
@@ -22,7 +25,10 @@ describe('attendance workflow', () => {
     const updates = [{ studentId: 'existing', status: 'LATE' as const }];
 
     await expect(
-      submitAttendanceChanges(creates, updates, { createRecords, updateRecord }),
+      submitAttendanceChanges(creates, updates, {
+        createRecords,
+        updateRecord,
+      }),
     ).resolves.toEqual({ failedUpdates: 0 });
     expect(createRecords).toHaveBeenCalledWith(creates);
     expect(updateRecord).toHaveBeenCalledWith(updates[0]);
@@ -50,7 +56,9 @@ describe('attendance workflow', () => {
     const create = vi.fn().mockRejectedValue(new ApiError('Duplicate', 409));
     const refresh = vi.fn().mockResolvedValue([session]);
 
-    await expect(openOrCreateSession([], '2026-11-11', create, refresh)).resolves.toBe(session);
+    await expect(
+      openOrCreateSession([], '2026-11-11', create, refresh),
+    ).resolves.toBe(session);
     expect(refresh).toHaveBeenCalledOnce();
   });
 });

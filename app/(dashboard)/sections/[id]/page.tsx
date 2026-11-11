@@ -5,5 +5,10 @@ export default async function SectionDetailPage({
   searchParams,
 }: PageProps<'/sections/[id]'>) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  return <SectionDetail id={id} initialTab={query.tab === 'attendance' ? 'attendance' : 'overview'} />;
+  return (
+    <SectionDetail
+      id={id}
+      initialTab={query.tab === 'attendance' ? 'attendance' : 'overview'}
+    />
+  );
 }

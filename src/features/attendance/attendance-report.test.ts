@@ -24,7 +24,9 @@ describe('attendance report contract', () => {
   });
 
   it('does not send empty date strings to date-filtered endpoints', () => {
-    expect(buildAttendanceDateParams('', '2026-11-11')).toEqual({ dateTo: '2026-11-11' });
+    expect(buildAttendanceDateParams('', '2026-11-11')).toEqual({
+      dateTo: '2026-11-11',
+    });
   });
 
   it('formats backend percentages without recalculating unmarked students', () => {

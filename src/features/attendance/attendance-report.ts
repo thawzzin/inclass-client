@@ -19,7 +19,9 @@ export function buildAttendanceDateParams(dateFrom: string, dateTo: string) {
   };
 }
 
-export function buildAttendanceHistoryParams(filters: AttendanceHistoryFilters) {
+export function buildAttendanceHistoryParams(
+  filters: AttendanceHistoryFilters,
+) {
   return {
     ...(filters.sectionId ? { sectionId: filters.sectionId } : {}),
     ...buildAttendanceDateParams(filters.dateFrom, filters.dateTo),
@@ -43,9 +45,14 @@ export function filterStudentAttendance<
   T extends { attendanceRecord: { status: AttendanceStatus } | null },
 >(items: T[], status: StudentAttendanceStatus): T[] {
   if (!status) return items;
-  return items.filter((item) => attendanceStatusLabel(item.attendanceRecord) === status);
+  return items.filter(
+    (item) => attendanceStatusLabel(item.attendanceRecord) === status,
+  );
 }
 
-export function isAttendanceDateRangeValid(dateFrom: string, dateTo: string): boolean {
+export function isAttendanceDateRangeValid(
+  dateFrom: string,
+  dateTo: string,
+): boolean {
   return !dateFrom || !dateTo || dateFrom <= dateTo;
 }

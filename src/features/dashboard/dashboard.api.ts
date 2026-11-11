@@ -8,7 +8,9 @@ import type {
   TeacherDashboardSummary,
 } from '@/src/lib/api/types';
 
-async function request<T>(action: () => Promise<{ data: ApiSuccess<T> }>): Promise<T> {
+async function request<T>(
+  action: () => Promise<{ data: ApiSuccess<T> }>,
+): Promise<T> {
   try {
     return (await action()).data.data;
   } catch (error) {
@@ -19,13 +21,15 @@ async function request<T>(action: () => Promise<{ data: ApiSuccess<T> }>): Promi
 export const dashboardApi = {
   summary: () =>
     request(() =>
-      apiClient.get<ApiSuccess<AdminDashboardSummary | TeacherDashboardSummary>>(
-        '/dashboard/summary',
-      ),
+      apiClient.get<
+        ApiSuccess<AdminDashboardSummary | TeacherDashboardSummary>
+      >('/dashboard/summary'),
     ),
   attendanceStatistics: () =>
     request(() =>
-      apiClient.get<ApiSuccess<AttendanceStatistics>>('/dashboard/attendance-stats'),
+      apiClient.get<ApiSuccess<AttendanceStatistics>>(
+        '/dashboard/attendance-stats',
+      ),
     ),
   recentAttendance: () =>
     request(() =>

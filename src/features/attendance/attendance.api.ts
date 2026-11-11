@@ -10,10 +10,16 @@ import type {
   PaginatedResponse,
 } from '@/src/lib/api/types';
 
-import { buildAttendanceDateParams, buildAttendanceHistoryParams, type AttendanceHistoryFilters } from './attendance-report';
+import {
+  buildAttendanceDateParams,
+  buildAttendanceHistoryParams,
+  type AttendanceHistoryFilters,
+} from './attendance-report';
 import type { AttendanceRecordChange } from './attendance-state';
 
-async function request<T>(action: () => Promise<{ data: ApiSuccess<T> }>): Promise<T> {
+async function request<T>(
+  action: () => Promise<{ data: ApiSuccess<T> }>,
+): Promise<T> {
   try {
     return (await action()).data.data;
   } catch (error) {
@@ -39,7 +45,9 @@ export const attendanceApi = {
   },
   session: (id: string) =>
     request(() =>
-      apiClient.get<ApiSuccess<AttendanceSessionDetail>>(`/attendance-sessions/${id}`),
+      apiClient.get<ApiSuccess<AttendanceSessionDetail>>(
+        `/attendance-sessions/${id}`,
+      ),
     ),
   createRecords: async (id: string, records: AttendanceRecordChange[]) => {
     await ensureCsrfToken();
@@ -50,7 +58,11 @@ export const attendanceApi = {
       ),
     );
   },
-  updateRecord: async (id: string, studentId: string, status: AttendanceStatus) => {
+  updateRecord: async (
+    id: string,
+    studentId: string,
+    status: AttendanceStatus,
+  ) => {
     await ensureCsrfToken();
     await request(() =>
       apiClient.patch<ApiSuccess<Record<string, never>>>(
@@ -66,7 +78,10 @@ export const attendanceApi = {
         { params: buildAttendanceHistoryParams(filters) },
       ),
     ),
-  statistics: (sectionId: string, filters: Pick<AttendanceHistoryFilters, 'dateFrom' | 'dateTo'>) =>
+  statistics: (
+    sectionId: string,
+    filters: Pick<AttendanceHistoryFilters, 'dateFrom' | 'dateTo'>,
+  ) =>
     request(() =>
       apiClient.get<ApiSuccess<AttendanceStatistics>>(
         `/sections/${sectionId}/attendance-statistics`,

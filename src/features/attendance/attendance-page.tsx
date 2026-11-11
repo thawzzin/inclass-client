@@ -26,7 +26,11 @@ export function AttendancePage() {
       {sections.isLoading ? (
         <p className="text-sm text-zinc-500">Loading sections…</p>
       ) : sections.isError || !sections.data ? (
-        <button type="button" onClick={() => void sections.refetch()} className="text-sm underline">
+        <button
+          type="button"
+          onClick={() => void sections.refetch()}
+          className="text-sm underline"
+        >
           Unable to load sections. Retry
         </button>
       ) : sections.data.length ? (
@@ -41,9 +45,14 @@ export function AttendancePage() {
                   <p className="font-medium">
                     {section.course.code} · Section {section.sectionCode}
                   </p>
-                  <p className="mt-1 text-sm text-zinc-500">{section.course.name}</p>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    {section.course.name}
+                  </p>
                 </div>
-                <CalendarCheck className="size-5 text-zinc-500" aria-hidden="true" />
+                <CalendarCheck
+                  className="size-5 text-zinc-500"
+                  aria-hidden="true"
+                />
               </Link>
             </li>
           ))}

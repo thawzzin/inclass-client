@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Providers } from "./providers";
+import type { Metadata } from 'next';
+import './globals.css';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: "InClass",
-  description: "University attendance management",
+  title: 'InClass',
+  description: 'University attendance management',
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-full flex flex-col antialiased">

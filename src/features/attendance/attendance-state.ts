@@ -11,13 +11,17 @@ export interface AttendanceRecordChange {
   status: AttendanceStatus;
 }
 
-export function createAttendanceDraft(roster: AttendanceRosterEntry[]): AttendanceDraft {
+export function createAttendanceDraft(
+  roster: AttendanceRosterEntry[],
+): AttendanceDraft {
   return Object.fromEntries(
     roster.map((entry) => [entry.studentId, entry.attendanceRecord?.status]),
   );
 }
 
-export function markAllUnmarkedPresent(draft: AttendanceDraft): AttendanceDraft {
+export function markAllUnmarkedPresent(
+  draft: AttendanceDraft,
+): AttendanceDraft {
   return Object.fromEntries(
     Object.entries(draft).map(([studentId, status]) => [
       studentId,
@@ -54,7 +58,8 @@ export function partitionAttendanceChanges(
     const status = draft[entry.studentId];
     if (!status) continue;
 
-    if (!entry.attendanceRecord) creates.push({ studentId: entry.studentId, status });
+    if (!entry.attendanceRecord)
+      creates.push({ studentId: entry.studentId, status });
     else if (entry.attendanceRecord.status !== status) {
       updates.push({ studentId: entry.studentId, status });
     }

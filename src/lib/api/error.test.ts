@@ -15,7 +15,13 @@ describe('normalizeApiError', () => {
       headers: {},
       config: { headers: new AxiosHeaders() },
     };
-    const error = new AxiosError('Request failed', 'ERR_BAD_REQUEST', undefined, undefined, response);
+    const error = new AxiosError(
+      'Request failed',
+      'ERR_BAD_REQUEST',
+      undefined,
+      undefined,
+      response,
+    );
 
     const normalized = normalizeApiError(error);
 

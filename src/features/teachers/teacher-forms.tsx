@@ -17,46 +17,177 @@ import {
 } from './teacher-contract';
 import { teachersApi } from './teachers.api';
 
-const fieldClass = 'rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700';
+const fieldClass =
+  'rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700';
 
-export function TeacherForm({ teacher, onClose, onSaved }: { teacher?: Teacher; onClose(): void; onSaved(): void }) {
+export function TeacherForm({
+  teacher,
+  onClose,
+  onSaved,
+}: {
+  teacher?: Teacher;
+  onClose(): void;
+  onSaved(): void;
+}) {
   const form = useForm<CreateTeacherValues | UpdateTeacherValues>({
     resolver: zodResolver(teacher ? updateTeacherSchema : createTeacherSchema),
-    defaultValues: teacher ? { name: teacher.name, email: teacher.email } : { name: '', email: '', password: '' },
+    defaultValues: teacher
+      ? { name: teacher.name, email: teacher.email }
+      : { name: '', email: '', password: '' },
   });
 
   async function submit(values: CreateTeacherValues | UpdateTeacherValues) {
     try {
-      if (teacher) await teachersApi.update(teacher.id, values as UpdateTeacherValues);
+      if (teacher)
+        await teachersApi.update(teacher.id, values as UpdateTeacherValues);
       else await teachersApi.create(values as CreateTeacherValues);
       toast.success(teacher ? 'Teacher updated.' : 'Teacher created.');
       onSaved();
     } catch (error) {
-      toast.error(error instanceof ApiError ? error.message : 'Unable to save teacher.');
+      toast.error(
+        error instanceof ApiError ? error.message : 'Unable to save teacher.',
+      );
     }
   }
 
   return (
-    <form onSubmit={form.handleSubmit(submit)} className="grid gap-4 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800">
-      <h2 className="font-semibold">{teacher ? 'Edit teacher' : 'Add teacher'}</h2>
-      <label className="grid gap-2 text-sm font-medium">Name<input className={fieldClass} {...form.register('name')} />{form.formState.errors.name && <span className="text-red-600">{form.formState.errors.name.message}</span>}</label>
-      <label className="grid gap-2 text-sm font-medium">Email<input type="email" className={fieldClass} {...form.register('email')} />{form.formState.errors.email && <span className="text-red-600">{form.formState.errors.email.message}</span>}</label>
-      {!teacher && <label className="grid gap-2 text-sm font-medium">Password<input type="password" autoComplete="new-password" className={fieldClass} {...form.register('password')} />{'password' in form.formState.errors && <span className="text-red-600">{form.formState.errors.password?.message}</span>}</label>}
-      <div className="flex gap-2"><button disabled={form.formState.isSubmitting} className="rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950">Save</button><button type="button" onClick={onClose} className="rounded-md border px-4 py-2 text-sm">Cancel</button></div>
+    <form
+      onSubmit={form.handleSubmit(submit)}
+      className="grid gap-4 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800"
+    >
+      <h2 className="font-semibold">
+        {teacher ? 'Edit teacher' : 'Add teacher'}
+      </h2>
+      <label className="grid gap-2 text-sm font-medium">
+        Name
+        <input className={fieldClass} {...form.register('name')} />
+        {form.formState.errors.name && (
+          <span className="text-red-600">
+            {form.formState.errors.name.message}
+          </span>
+        )}
+      </label>
+      <label className="grid gap-2 text-sm font-medium">
+        Email
+        <input
+          type="email"
+          className={fieldClass}
+          {...form.register('email')}
+        />
+        {form.formState.errors.email && (
+          <span className="text-red-600">
+            {form.formState.errors.email.message}
+          </span>
+        )}
+      </label>
+      {!teacher && (
+        <label className="grid gap-2 text-sm font-medium">
+          Password
+          <input
+            type="password"
+            autoComplete="new-password"
+            className={fieldClass}
+            {...form.register('password')}
+          />
+          {'password' in form.formState.errors && (
+            <span className="text-red-600">
+              {form.formState.errors.password?.message}
+            </span>
+          )}
+        </label>
+      )}
+      <div className="flex gap-2">
+        <button
+          disabled={form.formState.isSubmitting}
+          className="rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950"
+        >
+          Save
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-md border px-4 py-2 text-sm"
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }
 
-export function TeacherPasswordForm({ teacher, onClose }: { teacher: Teacher; onClose(): void }) {
-  const form = useForm<TeacherPasswordValues>({ resolver: zodResolver(teacherPasswordSchema), defaultValues: { newPassword: '', confirmPassword: '' } });
+export function TeacherPasswordForm({
+  teacher,
+  onClose,
+}: {
+  teacher: Teacher;
+  onClose(): void;
+}) {
+  const form = useForm<TeacherPasswordValues>({
+    resolver: zodResolver(teacherPasswordSchema),
+    defaultValues: { newPassword: '', confirmPassword: '' },
+  });
   async function submit(values: TeacherPasswordValues) {
     try {
       await teachersApi.changePassword(teacher.id, values.newPassword);
       toast.success('Teacher password changed and active sessions revoked.');
       onClose();
     } catch (error) {
-      toast.error(error instanceof ApiError ? error.message : 'Unable to change password.');
+      toast.error(
+        error instanceof ApiError
+          ? error.message
+          : 'Unable to change password.',
+      );
     }
   }
-  return <form onSubmit={form.handleSubmit(submit)} className="grid gap-4 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800"><div><h2 className="font-semibold">Change password</h2><p className="text-sm text-zinc-500">Set a new password for {teacher.name}.</p></div><label className="grid gap-2 text-sm font-medium">New password<input type="password" autoComplete="new-password" className={fieldClass} {...form.register('newPassword')} /></label><label className="grid gap-2 text-sm font-medium">Confirm password<input type="password" autoComplete="new-password" className={fieldClass} {...form.register('confirmPassword')} />{form.formState.errors.confirmPassword && <span className="text-red-600">{form.formState.errors.confirmPassword.message}</span>}</label><div className="flex gap-2"><button disabled={form.formState.isSubmitting} className="rounded-md bg-zinc-950 px-4 py-2 text-sm text-white dark:bg-zinc-50 dark:text-zinc-950">Change password</button><button type="button" onClick={onClose} className="rounded-md border px-4 py-2 text-sm">Cancel</button></div></form>;
+  return (
+    <form
+      onSubmit={form.handleSubmit(submit)}
+      className="grid gap-4 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800"
+    >
+      <div>
+        <h2 className="font-semibold">Change password</h2>
+        <p className="text-sm text-zinc-500">
+          Set a new password for {teacher.name}.
+        </p>
+      </div>
+      <label className="grid gap-2 text-sm font-medium">
+        New password
+        <input
+          type="password"
+          autoComplete="new-password"
+          className={fieldClass}
+          {...form.register('newPassword')}
+        />
+      </label>
+      <label className="grid gap-2 text-sm font-medium">
+        Confirm password
+        <input
+          type="password"
+          autoComplete="new-password"
+          className={fieldClass}
+          {...form.register('confirmPassword')}
+        />
+        {form.formState.errors.confirmPassword && (
+          <span className="text-red-600">
+            {form.formState.errors.confirmPassword.message}
+          </span>
+        )}
+      </label>
+      <div className="flex gap-2">
+        <button
+          disabled={form.formState.isSubmitting}
+          className="rounded-md bg-zinc-950 px-4 py-2 text-sm text-white dark:bg-zinc-50 dark:text-zinc-950"
+        >
+          Change password
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-md border px-4 py-2 text-sm"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
 }

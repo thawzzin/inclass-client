@@ -1,6 +1,15 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 
 import type { User } from '@/src/lib/api/types';
 
@@ -21,17 +30,34 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
+  const [user, setSessionUser] = useState<User | null>(null);
   const [status, setStatus] = useState<AuthStatus>('loading');
 
   useEffect(() => {
     void restoreSession(authApi)
       .then((sessionUser) => {
-        setUser(sessionUser);
+        setSessionUser(sessionUser);
         setStatus(sessionUser ? 'authenticated' : 'unauthenticated');
       })
       .catch(() => setStatus('unauthenticated'));
   }, []);
+
+  const setUser = useCallback(
+    (nextUser: User | null) => {
+      if (
+        !nextUser ||
+        !user ||
+        nextUser.id !== user.id ||
+        nextUser.role !== user.role
+      ) {
+        queryClient.clear();
+      }
+      setSessionUser(nextUser);
+      setStatus(nextUser ? 'authenticated' : 'unauthenticated');
+    },
+    [queryClient, user],
+  );
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -41,16 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login: async (input) => {
         const sessionUser = await authApi.login(input);
         setUser(sessionUser);
-        setStatus('authenticated');
         return sessionUser;
       },
       logout: async () => {
         await authApi.logout();
         setUser(null);
-        setStatus('unauthenticated');
       },
     }),
-    [status, user],
+    [setUser, status, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

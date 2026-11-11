@@ -1,5 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
-import { BookOpen, CalendarCheck, GraduationCap, LayoutDashboard, Settings, Users } from 'lucide-react';
+import {
+  BookOpen,
+  CalendarCheck,
+  GraduationCap,
+  LayoutDashboard,
+  Settings,
+  Users,
+} from 'lucide-react';
 
 import type { Role } from '@/src/lib/api/types';
 

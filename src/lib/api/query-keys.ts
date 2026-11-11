@@ -1,3 +1,5 @@
+import type { Role } from './types';
+
 export const queryKeys = {
   auth: {
     me: ['auth', 'me'] as const,
@@ -30,8 +32,9 @@ export const queryKeys = {
       ['sections', sectionId, 'attendance-statistics', filters] as const,
   },
   dashboard: {
-    summary: ['dashboard', 'summary'] as const,
-    attendanceStats: ['dashboard', 'attendance-stats'] as const,
-    recentAttendance: ['dashboard', 'recent-attendance'] as const,
+    summary: (role: Role | undefined) => ['dashboard', role, 'summary'] as const,
+    attendanceStats: (role: Role | undefined) => ['dashboard', role, 'attendance-stats'] as const,
+    recentAttendance: (role: Role | undefined) => ['dashboard', role, 'recent-attendance'] as const,
+    assignedSections: (role: Role | undefined) => ['dashboard', role, 'assigned-sections'] as const,
   },
 };

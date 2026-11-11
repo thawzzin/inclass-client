@@ -168,8 +168,8 @@ represented by a missing attendance record and are excluded from that denominato
 | Method | Path | Response data |
 | --- | --- | --- |
 | GET | `/dashboard/summary` | ADMIN: `activeStudents`, `activeTeachers`, `activeCourses`, `activeSections`, `attendanceSessions`. TEACHER: `assignedSections`, `activeStudents` (distinct enrolled active students), `attendanceSessions`. |
-| GET | `/dashboard/attendance-stats` | Role-scoped backend attendance statistics. |
-| GET | `/dashboard/recent-attendance` | Up to 10 role-scoped recent sessions with section/course, creator `{ id, name }`, and captured-roster count. |
+| GET | `/dashboard/attendance-stats` | Role-scoped `{ totalExpected, present, absent, late, unmarked, attendancePercentage }`; teachers include only assigned sections. |
+| GET | `/dashboard/recent-attendance` | Up to 10 role-scoped recent sessions ordered by creation time, including section/course, creator `{ id, name }`, and `_count.roster`. |
 
 ## Integration blockers and implementation implications
 

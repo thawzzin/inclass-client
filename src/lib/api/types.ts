@@ -154,3 +154,9 @@ export interface TeacherDashboardSummary {
   activeStudents: number;
   attendanceSessions: number;
 }
+
+export interface DashboardRecentAttendance extends AttendanceSession {
+  section: Omit<Section, 'course' | 'teacher'> & { course: Course };
+  createdBy: Pick<User, 'id' | 'name'>;
+  _count: { roster: number };
+}

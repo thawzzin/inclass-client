@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { queryKeys } from '@/src/lib/api/query-keys';
 
 import { attendanceApi } from './attendance.api';
+import { AttendanceReportPanel } from './attendance-report-panel';
 import { openOrCreateSession } from './attendance-workflow';
 
 function localDate(): string {
@@ -120,6 +121,7 @@ export function SectionAttendance({ sectionId }: { sectionId: string }) {
           </p>
         )}
       </div>
+      <AttendanceReportPanel key={sectionId} fixedSectionId={sectionId} />
     </div>
   );
 }

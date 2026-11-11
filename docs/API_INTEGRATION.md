@@ -156,9 +156,9 @@ students into a roster; later enrollment changes do not alter that roster.
 | POST | `/attendance-sessions/:id/records/bulk` | Authorized user + CSRF; `{ records: [{ studentId: UUID, status: AttendanceStatus }] }`; at least one unique student. Creates records only for students without an existing record; `409` if any submitted record already exists. |
 | PATCH | `/attendance-sessions/:id/records/:studentId` | Authorized user + CSRF; `{ status: AttendanceStatus }`. Returns `{}`; `404` if no existing record exists. |
 | POST | `/attendance-sessions/:id/records/mark-all-present` | Authorized user + CSRF; no body. Returns `{ marked: number }`; does not replace existing ABSENT or LATE records. |
-| GET | `/attendance-records` | Authorized user. Optional `sectionId`, `dateFrom`, `dateTo`, `status`, `page`, `pageSize`; returns `Paginated<AttendanceRecord>`. Add `format=csv` for CSV download. Teachers receive only assigned-section data. |
-| GET | `/sections/:id/attendance-statistics` | Authorized user; optional `dateFrom`, `dateTo`. Returns backend-calculated totals and percentage. |
-| GET | `/students/:id/attendance` | Authorized user; optional `dateFrom`, `dateTo`. Returns captured-roster history (including unmarked entries) and statistics within role scope. |
+| GET | `/attendance-records` | Authorized user. Optional `sectionId`, `dateFrom`, `dateTo`, `status`, `page`, `pageSize`; returns paginated submitted records with captured student and session/section/course data. Add `format=csv` for CSV download. Teachers receive only assigned-section data. |
+| GET | `/sections/:id/attendance-statistics` | Authorized user; optional `dateFrom`, `dateTo`. Returns `{ totalExpected, present, absent, late, unmarked, attendancePercentage }`. |
+| GET | `/students/:id/attendance` | Authorized user; optional `dateFrom`, `dateTo`. Returns `{ items, statistics }`; items are captured-roster entries including a nullable attendance record, so missing records are UNMARKED. Results remain within the caller's role scope. |
 
 Statistics use `(present + late) / (present + absent + late) × 100`; unmarked students are
 represented by a missing attendance record and are excluded from that denominator.

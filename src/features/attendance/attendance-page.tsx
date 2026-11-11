@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { academicsApi } from '@/src/features/academics/academics.api';
 import { queryKeys } from '@/src/lib/api/query-keys';
 
+import { AttendanceReportPanel } from './attendance-report-panel';
+
 export function AttendancePage() {
   const sections = useQuery({
     queryKey: queryKeys.sections.all,
@@ -51,6 +53,7 @@ export function AttendancePage() {
           No sections are available.
         </p>
       )}
+      <AttendanceReportPanel sections={sections.data ?? []} />
     </section>
   );
 }

@@ -105,6 +105,33 @@ export interface AttendanceSessionDetail extends AttendanceSession {
   roster: AttendanceRosterEntry[];
 }
 
+export interface AttendanceHistoryRecord extends AttendanceRecord {
+  attendanceSessionStudent: {
+    id: string;
+    attendanceSessionId: string;
+    studentId: string;
+    student: Student;
+    attendanceSession: AttendanceSession & {
+      section: Omit<Section, 'course' | 'teacher'> & { course: Course };
+    };
+  };
+}
+
+export interface StudentAttendanceItem {
+  id: string;
+  attendanceSessionId: string;
+  studentId: string;
+  attendanceSession: AttendanceSession & {
+    section: Omit<Section, 'course' | 'teacher'> & { course: Course };
+  };
+  attendanceRecord: AttendanceRecord | null;
+}
+
+export interface StudentAttendanceHistory {
+  items: StudentAttendanceItem[];
+  statistics: AttendanceStatistics;
+}
+
 export interface AttendanceStatistics {
   totalExpected: number;
   present: number;

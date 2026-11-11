@@ -5,6 +5,7 @@ export const queryKeys = {
   students: {
     all: ['students'] as const,
     detail: (id: string) => ['students', id] as const,
+    attendance: (id: string, filters: object) => ['students', id, 'attendance', filters] as const,
   },
   teachers: {
     all: ['teachers'] as const,
@@ -22,6 +23,11 @@ export const queryKeys = {
   },
   attendanceSessions: {
     detail: (id: string) => ['attendance-sessions', id] as const,
+  },
+  attendance: {
+    history: (filters: object) => ['attendance-records', filters] as const,
+    statistics: (sectionId: string, filters: object) =>
+      ['sections', sectionId, 'attendance-statistics', filters] as const,
   },
   dashboard: {
     summary: ['dashboard', 'summary'] as const,

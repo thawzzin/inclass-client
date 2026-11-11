@@ -4,9 +4,13 @@ import type {
   ApiSuccess,
   AttendanceSession,
   AttendanceSessionDetail,
+  AttendanceHistoryRecord,
+  AttendanceStatistics,
   AttendanceStatus,
+  PaginatedResponse,
 } from '@/src/lib/api/types';
 
+import { buildAttendanceDateParams, buildAttendanceHistoryParams, type AttendanceHistoryFilters } from './attendance-report';
 import type { AttendanceRecordChange } from './attendance-state';
 
 async function request<T>(action: () => Promise<{ data: ApiSuccess<T> }>): Promise<T> {
@@ -54,5 +58,32 @@ export const attendanceApi = {
         { status },
       ),
     );
+  },
+  history: (filters: AttendanceHistoryFilters) =>
+    request(() =>
+      apiClient.get<ApiSuccess<PaginatedResponse<AttendanceHistoryRecord>>>(
+        '/attendance-records',
+        { params: buildAttendanceHistoryParams(filters) },
+      ),
+    ),
+  statistics: (sectionId: string, filters: Pick<AttendanceHistoryFilters, 'dateFrom' | 'dateTo'>) =>
+    request(() =>
+      apiClient.get<ApiSuccess<AttendanceStatistics>>(
+        `/sections/${sectionId}/attendance-statistics`,
+        {
+          params: buildAttendanceDateParams(filters.dateFrom, filters.dateTo),
+        },
+      ),
+    ),
+  exportCsv: async (filters: AttendanceHistoryFilters) => {
+    try {
+      const response = await apiClient.get<Blob>('/attendance-records', {
+        params: { ...buildAttendanceHistoryParams(filters), format: 'csv' },
+        responseType: 'blob',
+      });
+      return response.data;
+    } catch (error) {
+      throw normalizeApiError(error);
+    }
   },
 };

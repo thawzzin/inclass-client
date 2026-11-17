@@ -3,7 +3,7 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { useState, type ReactNode } from 'react';
-import { Toaster } from 'sonner';
+import { Toaster } from '@/src/components/ui/sonner';
 
 import { createQueryClient } from '@/src/lib/query/client';
 import { AuthProvider } from '@/src/features/auth/auth-context';

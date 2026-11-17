@@ -41,6 +41,7 @@ export default function TeacherDetailPage() {
         Back to teachers
       </Link>
       <div>
+        <div className="ic-eyebrow">PEOPLE</div>
         <h1 className="text-2xl font-semibold">{teacher.data.name}</h1>
         <p className="mt-1 text-sm text-zinc-500">
           {teacher.data.email} · {teacher.data.status}

@@ -15,11 +15,11 @@ export default function DashboardLayout({
       >
         Skip to main content
       </a>
-      <div className="flex min-h-screen">
+      <div className="ic-app">
         <AppSidebar />
-        <div className="min-w-0 flex-1">
+        <div className="ic-workspace">
           <AppHeader />
-          <main id="main-content" tabIndex={-1} className="p-4 sm:p-6">
+          <main id="main-content" tabIndex={-1} className="ic-content">
             {children}
           </main>
         </div>

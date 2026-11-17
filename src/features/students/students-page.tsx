@@ -1,5 +1,22 @@
 'use client';
 
+import { Badge } from '@/src/components/ui/badge';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from '@/src/components/ui/native-select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/src/components/ui/table';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -47,36 +64,38 @@ export function StudentsPage() {
     return <p className="text-sm text-zinc-500">Loading students…</p>;
   if (students.isError)
     return (
-      <button
+      <Button
         type="button"
         onClick={() => void students.refetch()}
+        variant="link"
         className="text-sm underline"
       >
         Unable to load students. Retry
-      </button>
+      </Button>
     );
   const data = students.data;
   if (!data) return null;
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="ic-page-heading">
         <div>
+          <div className="ic-eyebrow">PEOPLE</div>
           <h1 className="text-2xl font-semibold tracking-tight">Students</h1>
           <p className="mt-1 text-sm text-zinc-500">
             Manage active student records.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={() => setCreating(true)}
           className="rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white dark:bg-zinc-50 dark:text-zinc-950"
         >
           Add student
-        </button>
+        </Button>
       </div>
       <div className="flex flex-wrap gap-3">
-        <input
+        <Input
           aria-label="Search students"
           value={search}
           onChange={(event) => {
@@ -84,9 +103,9 @@ export function StudentsPage() {
             setPage(1);
           }}
           placeholder="Search name or student ID"
-          className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700"
+          className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700 max-w-xs"
         />
-        <select
+        <NativeSelect
           aria-label="Filter by status"
           value={status ?? ''}
           onChange={(event) => {
@@ -97,10 +116,10 @@ export function StudentsPage() {
           }}
           className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700"
         >
-          <option value="">All statuses</option>
-          <option value="ACTIVE">Active</option>
-          <option value="INACTIVE">Inactive</option>
-        </select>
+          <NativeSelectOption value="">All statuses</NativeSelectOption>
+          <NativeSelectOption value="ACTIVE">Active</NativeSelectOption>
+          <NativeSelectOption value="INACTIVE">Inactive</NativeSelectOption>
+        </NativeSelect>
       </div>
       {(creating || editing) && (
         <StudentForm
@@ -117,35 +136,44 @@ export function StudentsPage() {
         />
       )}
       <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-zinc-50 text-zinc-500 dark:bg-zinc-900">
-            <tr>
-              <th className="p-3">Student ID</th>
-              <th className="p-3">Full name</th>
-              <th className="p-3">Nickname</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="w-full text-left text-sm">
+          <TableHeader className="bg-zinc-50 text-zinc-500 dark:bg-zinc-900">
+            <TableRow>
+              <TableHead className="p-3">Student ID</TableHead>
+              <TableHead className="p-3">Full name</TableHead>
+              <TableHead className="p-3">Nickname</TableHead>
+              <TableHead className="p-3">Status</TableHead>
+              <TableHead className="p-3">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data.items.map((student) => (
-              <tr
+              <TableRow
                 key={student.id}
                 className="border-t border-zinc-200 dark:border-zinc-800"
               >
-                <td className="p-3 font-medium">{student.studentId}</td>
-                <td className="p-3">{student.fullName}</td>
-                <td className="p-3">{student.nickname ?? '—'}</td>
-                <td className="p-3">{student.status}</td>
-                <td className="p-3">
-                  <button
+                <TableCell className="p-3 font-medium">
+                  {student.studentId}
+                </TableCell>
+                <TableCell className="p-3">{student.fullName}</TableCell>
+                <TableCell className="p-3">{student.nickname ?? '—'}</TableCell>
+                <TableCell className="p-3">
+                  <Badge
+                    className={`ic-status ${student.status === 'INACTIVE' ? 'ic-status-inactive' : ''}`}
+                  >
+                    {student.status === 'ACTIVE' ? 'Active' : 'Inactive'}
+                  </Badge>
+                </TableCell>
+                <TableCell className="p-3">
+                  <Button
                     type="button"
                     onClick={() => setEditing(student)}
+                    variant="link"
                     className="mr-3 underline"
                   >
                     Edit
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     disabled={changeStatus.isPending}
                     onClick={() =>
@@ -155,35 +183,38 @@ export function StudentsPage() {
                           student.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
                       })
                     }
+                    variant="link"
                     className="underline"
                   >
                     {student.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
-                  </button>
-                </td>
-              </tr>
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       <div className="flex items-center justify-between text-sm">
         <span>{data.total} students</span>
         <div className="space-x-2">
-          <button
+          <Button
             type="button"
             disabled={page <= 1}
             onClick={() => setPage((value) => value - 1)}
+            variant="outline"
             className="rounded border px-3 py-1 disabled:opacity-50"
           >
             Previous
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={page >= data.totalPages}
             onClick={() => setPage((value) => value + 1)}
+            variant="outline"
             className="rounded border px-3 py-1 disabled:opacity-50"
           >
             Next
-          </button>
+          </Button>
         </div>
       </div>
     </section>
@@ -228,27 +259,28 @@ function StudentForm({
   }
   return (
     <form
+      noValidate
       onSubmit={submit}
       className="grid gap-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
     >
       <h2 className="font-semibold">
         {student ? 'Edit student' : 'Add student'}
       </h2>
-      <input
+      <Input
         aria-label="Student ID"
         value={studentId}
         onChange={(event) => setStudentId(event.target.value)}
         placeholder="Student ID"
         className="rounded border px-3 py-2 dark:border-zinc-700"
       />
-      <input
+      <Input
         aria-label="Full name"
         value={fullName}
         onChange={(event) => setFullName(event.target.value)}
         placeholder="Full name"
         className="rounded border px-3 py-2 dark:border-zinc-700"
       />
-      <input
+      <Input
         aria-label="Nickname"
         value={nickname}
         onChange={(event) => setNickname(event.target.value)}
@@ -256,19 +288,20 @@ function StudentForm({
         className="rounded border px-3 py-2 dark:border-zinc-700"
       />
       <div className="space-x-2">
-        <button
+        <Button
           disabled={saving}
           className="rounded bg-zinc-950 px-3 py-2 text-sm text-white dark:bg-zinc-50 dark:text-zinc-950"
         >
           Save
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onClose}
+          variant="outline"
           className="rounded border px-3 py-2 text-sm"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

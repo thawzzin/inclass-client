@@ -1,5 +1,10 @@
 'use client';
 
+import { Label } from '@/src/components/ui/label';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CalendarDays, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
@@ -62,13 +67,14 @@ export function SectionAttendance({ sectionId }: { sectionId: string }) {
   }
   if (sessions.isError || !sessions.data) {
     return (
-      <button
+      <Button
         type="button"
         onClick={() => void sessions.refetch()}
+        variant="link"
         className="text-sm underline"
       >
         Unable to load attendance sessions. Retry
-      </button>
+      </Button>
     );
   }
 
@@ -80,23 +86,23 @@ export function SectionAttendance({ sectionId }: { sectionId: string }) {
           A section can have only one attendance session per calendar date.
         </p>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
-          <label className="grid gap-1 text-sm">
+          <Label className="grid gap-1 text-sm">
             <span>Attendance date</span>
-            <input
+            <Input
               type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
               className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 dark:border-zinc-700"
             />
-          </label>
-          <button
+          </Label>
+          <Button
             type="button"
             disabled={!date || openSession.isPending}
             onClick={() => openSession.mutate()}
             className="rounded-md bg-zinc-950 px-4 py-2 text-sm text-white disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-950"
           >
             {openSession.isPending ? 'Opening…' : 'Open attendance'}
-          </button>
+          </Button>
         </div>
       </div>
 

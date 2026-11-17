@@ -1,71 +1,127 @@
 'use client';
 
-import { Menu, LogOut } from 'lucide-react';
+import { Button } from '@/src/components/ui/button';
+import { Avatar, AvatarFallback } from '@/src/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/src/components/ui/dropdown-menu';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/src/components/ui/sheet';
+
+import { LogOut, Menu, Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 
 import { useAuth } from '@/src/features/auth/auth-context';
+import { Brand } from './brand';
 import { navigationForRole } from './navigation';
 
 export function AppHeader() {
   const router = useRouter();
+  const pathname = usePathname();
   const { logout, user } = useAuth();
+  const { resolvedTheme, setTheme } = useTheme();
   if (!user) return null;
 
+  const current = navigationForRole(user.role).find(
+    (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+  );
   async function handleLogout() {
     await logout();
     router.replace('/login');
   }
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-zinc-200 bg-white px-4 sm:px-6 dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="flex items-center gap-3">
-        <details className="relative lg:hidden">
-          <summary
-            aria-label="Open navigation"
-            className="cursor-pointer list-none rounded-md p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-          >
-            <Menu aria-hidden="true" className="size-5" />
-          </summary>
-          <nav
-            aria-label="Mobile navigation"
-            className="absolute left-0 top-11 z-20 w-56 rounded-md border border-zinc-200 bg-white p-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
-          >
-            {navigationForRole(user.role).map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-2 rounded px-3 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
-              >
-                <item.icon aria-hidden="true" className="size-4" />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </details>
-        <nav aria-label="Breadcrumb" className="text-sm text-zinc-500">
-          <span>InClass</span>
-          <span aria-hidden="true" className="mx-2">
-            /
-          </span>
-          <span>Workspace</span>
+    <header className="ic-topbar">
+      <div className="ic-topbar-left">
+        <div className="ic-mobile-nav">
+          <Sheet>
+            <SheetTrigger
+              className="ic-menu-trigger"
+              aria-label="Open navigation"
+            >
+              <Menu aria-hidden="true" size={21} />
+            </SheetTrigger>
+            <SheetContent side="left" className="ic-mobile-sheet">
+              <SheetTitle className="sr-only">Navigation</SheetTitle>
+              <Brand />
+              <nav aria-label="Mobile navigation">
+                {navigationForRole(user.role).map((item) => (
+                  <SheetClose asChild key={item.href}>
+                    <Link href={item.href} className="ic-nav-item">
+                      <item.icon aria-hidden="true" size={19} />
+                      {item.label}
+                    </Link>
+                  </SheetClose>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+        <nav aria-label="Breadcrumb" className="ic-crumb">
+          Workspace <span aria-hidden="true"> / </span>
+          <strong>{current?.label ?? 'Overview'}</strong>
         </nav>
       </div>
-      <details className="relative">
-        <summary className="cursor-pointer list-none rounded-md px-3 py-2 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800">
-          {user.name}
-        </summary>
-        <div className="absolute right-0 z-10 mt-2 w-52 rounded-md border border-zinc-200 bg-white p-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-          <p className="px-2 py-1 text-xs text-zinc-500">{user.email}</p>
-          <button
-            type="button"
-            onClick={() => void handleLogout()}
-            className="flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+      <div className="ic-topbar-right">
+        <span className="ic-role">
+          {user.role === 'ADMIN' ? 'Admin view' : 'Teacher view'}
+        </span>
+        <Button
+          type="button"
+          variant="outline"
+          className="ic-icon-button"
+          aria-label={
+            resolvedTheme === 'dark' ? 'Use light theme' : 'Use dark theme'
+          }
+          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+        >
+          {resolvedTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className="ic-account-trigger"
+            aria-label={`Account menu for ${user.name}`}
           >
-            <LogOut aria-hidden="true" className="size-4" /> Sign out
-          </button>
-        </div>
-      </details>
+            <Avatar className="ic-avatar">
+              <AvatarFallback>
+                {user.name
+                  .split(/\s+/)
+                  .map((part) => part[0])
+                  .slice(0, 2)
+                  .join('')
+                  .toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="min-w-52 p-2">
+            <DropdownMenuLabel>
+              <strong>{user.name}</strong>
+              <small className="block font-normal text-muted-foreground">
+                {user.email}
+              </small>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/settings">Account settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => void handleLogout()}>
+              <LogOut size={15} aria-hidden="true" /> Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   );
 }

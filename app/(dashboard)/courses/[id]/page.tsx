@@ -29,6 +29,7 @@ export default function CourseDetailPage() {
         Back to courses
       </Link>
       <div>
+        <div className="ic-eyebrow">ACADEMICS</div>
         <h1 className="text-2xl font-semibold">
           {course.data.code} — {course.data.name}
         </h1>

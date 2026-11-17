@@ -1,5 +1,15 @@
 'use client';
 
+import { Badge } from '@/src/components/ui/badge';
+import { Card } from '@/src/components/ui/card';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from '@/src/components/ui/native-select';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -50,22 +60,24 @@ export function SectionsPage() {
     return <p className="text-sm text-zinc-500">Loading sections…</p>;
   if (sections.isError || courses.isError || !sections.data || !courses.data)
     return (
-      <button
+      <Button
         type="button"
         onClick={() => {
           void sections.refetch();
           void courses.refetch();
         }}
+        variant="link"
         className="text-sm underline"
       >
         Unable to load sections. Retry
-      </button>
+      </Button>
     );
   const visible = filterSections(sections.data, { courseId, search });
   return (
     <section className="space-y-6">
-      <div className="flex items-end justify-between gap-3">
+      <div className="ic-page-heading">
         <div>
+          <div className="ic-eyebrow">ACADEMICS</div>
           <h1 className="text-2xl font-semibold">
             {user?.role === 'TEACHER' ? 'My Sections' : 'Sections'}
           </h1>
@@ -74,36 +86,36 @@ export function SectionsPage() {
           </p>
         </div>
         {user?.role === 'ADMIN' && (
-          <button
+          <Button
             type="button"
             onClick={() => setCreating(true)}
             className="rounded-md bg-zinc-950 px-4 py-2 text-sm text-white dark:bg-zinc-50 dark:text-zinc-950"
           >
             Add section
-          </button>
+          </Button>
         )}
       </div>
       <div className="flex flex-wrap gap-3">
-        <input
+        <Input
           aria-label="Search sections"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Search section or teacher"
-          className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700"
+          className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700 max-w-xs"
         />
-        <select
+        <NativeSelect
           aria-label="Filter by course"
           value={courseId}
           onChange={(event) => setCourseId(event.target.value)}
           className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700"
         >
-          <option value="">All courses</option>
+          <NativeSelectOption value="">All courses</NativeSelectOption>
           {courses.data.map((course) => (
-            <option key={course.id} value={course.id}>
+            <NativeSelectOption key={course.id} value={course.id}>
               {course.code}
-            </option>
+            </NativeSelectOption>
           ))}
-        </select>
+        </NativeSelect>
       </div>
       {user?.role === 'ADMIN' && (creating || editing) && (
         <SectionForm
@@ -123,11 +135,12 @@ export function SectionsPage() {
       )}
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {visible.map((section) => (
-          <article
+          <Card
+            role="article"
             key={section.id}
-            className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
+            className="ic-section-card rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
           >
-            <div className="flex justify-between gap-3">
+            <div className="flex justify-between items-start gap-3">
               <div>
                 <Link
                   href={`/sections/${section.id}`}
@@ -139,19 +152,24 @@ export function SectionsPage() {
                   {section.course.name}
                 </p>
               </div>
-              <span className="text-xs text-zinc-500">{section.status}</span>
+              <Badge
+                className={`ic-status ${section.status === 'INACTIVE' ? 'ic-status-inactive' : ''}`}
+              >
+                {section.status === 'ACTIVE' ? 'Active' : 'Inactive'}
+              </Badge>
             </div>
             <p className="mt-4 text-sm">Teacher: {section.teacher.name}</p>
             {user?.role === 'ADMIN' && (
               <div className="mt-4 space-x-3 text-sm">
-                <button
+                <Button
                   type="button"
                   onClick={() => setEditing(section)}
+                  variant="link"
                   className="underline"
                 >
                   Edit
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   disabled={status.isPending}
                   onClick={() =>
@@ -161,13 +179,14 @@ export function SectionsPage() {
                         section.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
                     })
                   }
+                  variant="link"
                   className="underline"
                 >
                   {section.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
-                </button>
+                </Button>
               </div>
             )}
-          </article>
+          </Card>
         ))}
       </div>
       {visible.length === 0 && (

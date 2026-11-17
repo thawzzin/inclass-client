@@ -1,5 +1,24 @@
 'use client';
 
+import { Badge } from '@/src/components/ui/badge';
+
+import { Label } from '@/src/components/ui/label';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from '@/src/components/ui/native-select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/src/components/ui/table';
+
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Download } from 'lucide-react';
 import Link from 'next/link';
@@ -73,7 +92,10 @@ export function AttendanceReportPanel({
   }
 
   return (
-    <section className="space-y-4" aria-labelledby="attendance-history-title">
+    <section
+      className="ic-panel space-y-4"
+      aria-labelledby="attendance-history-title"
+    >
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
           <h2 id="attendance-history-title" className="font-semibold">
@@ -84,58 +106,59 @@ export function AttendanceReportPanel({
             in session and student details.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           disabled={!validRange || exportCsv.isPending}
           onClick={() => exportCsv.mutate()}
+          variant="outline"
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 px-4 py-2 text-sm disabled:opacity-50 dark:border-zinc-700"
         >
           <Download className="size-4" aria-hidden="true" />
           {exportCsv.isPending ? 'Exporting…' : 'Export CSV'}
-        </button>
+        </Button>
       </div>
 
-      <div className="grid gap-3 rounded-lg border border-zinc-200 p-4 sm:grid-cols-2 lg:grid-cols-4 dark:border-zinc-800">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {!fixedSectionId && (
-          <label className="grid gap-1 text-sm">
+          <Label className="grid gap-1 text-sm">
             <span>Section</span>
-            <select
+            <NativeSelect
               value={filters.sectionId}
               onChange={(event) =>
                 updateFilter('sectionId', event.target.value)
               }
               className="min-h-11 rounded-md border border-zinc-300 bg-transparent px-3 dark:border-zinc-700"
             >
-              <option value="">All sections</option>
+              <NativeSelectOption value="">All sections</NativeSelectOption>
               {sections.map((section) => (
-                <option key={section.id} value={section.id}>
+                <NativeSelectOption key={section.id} value={section.id}>
                   {section.course.code} · {section.sectionCode}
-                </option>
+                </NativeSelectOption>
               ))}
-            </select>
-          </label>
+            </NativeSelect>
+          </Label>
         )}
-        <label className="grid gap-1 text-sm">
+        <Label className="grid gap-1 text-sm">
           <span>From</span>
-          <input
+          <Input
             type="date"
             value={filters.dateFrom}
             onChange={(event) => updateFilter('dateFrom', event.target.value)}
             className="min-h-11 rounded-md border border-zinc-300 bg-transparent px-3 dark:border-zinc-700"
           />
-        </label>
-        <label className="grid gap-1 text-sm">
+        </Label>
+        <Label className="grid gap-1 text-sm">
           <span>To</span>
-          <input
+          <Input
             type="date"
             value={filters.dateTo}
             onChange={(event) => updateFilter('dateTo', event.target.value)}
             className="min-h-11 rounded-md border border-zinc-300 bg-transparent px-3 dark:border-zinc-700"
           />
-        </label>
-        <label className="grid gap-1 text-sm">
+        </Label>
+        <Label className="grid gap-1 text-sm">
           <span>Status</span>
-          <select
+          <NativeSelect
             value={filters.status}
             onChange={(event) =>
               updateFilter(
@@ -145,14 +168,16 @@ export function AttendanceReportPanel({
             }
             className="min-h-11 rounded-md border border-zinc-300 bg-transparent px-3 dark:border-zinc-700"
           >
-            <option value="">All submitted statuses</option>
+            <NativeSelectOption value="">
+              All submitted statuses
+            </NativeSelectOption>
             {statuses.map((status) => (
-              <option key={status} value={status}>
+              <NativeSelectOption key={status} value={status}>
                 {status}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
-        </label>
+          </NativeSelect>
+        </Label>
       </div>
       {!validRange && (
         <p role="alert" className="text-sm text-red-700 dark:text-red-400">
@@ -164,13 +189,14 @@ export function AttendanceReportPanel({
         <AttendanceStatisticsSummary statistics={statistics.data} />
       )}
       {statistics.isError && (
-        <button
+        <Button
           type="button"
           onClick={() => void statistics.refetch()}
+          variant="link"
           className="text-sm underline"
         >
           Unable to load statistics. Retry
-        </button>
+        </Button>
       )}
 
       {history.isLoading ? (
@@ -178,56 +204,72 @@ export function AttendanceReportPanel({
           Loading attendance records…
         </p>
       ) : history.isError ? (
-        <button
+        <Button
           type="button"
           onClick={() => void history.refetch()}
+          variant="link"
           className="text-sm underline"
         >
           Unable to load attendance records. Retry
-        </button>
+        </Button>
       ) : history.data?.items.length ? (
         <>
-          <ul className="divide-y rounded-lg border border-zinc-200 dark:border-zinc-800">
-            {history.data.items.map((record) => {
-              const captured = record.attendanceSessionStudent;
-              const session = captured.attendanceSession;
-              return (
-                <li
-                  key={record.id}
-                  className="grid gap-2 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
-                >
-                  <div>
-                    <p className="font-medium">
-                      {captured.student.studentId} · {captured.student.fullName}
-                    </p>
-                    <p className="mt-1 text-sm text-zinc-500">
-                      {session.section.course.code} · Section{' '}
-                      {session.section.sectionCode} ·{' '}
-                      {session.date.slice(0, 10)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="rounded-full border border-zinc-300 px-2 py-1 text-xs font-medium dark:border-zinc-700">
-                      {record.status}
-                    </span>
-                    <Link
-                      href={`/attendance/${session.id}`}
-                      className="inline-flex min-h-11 items-center text-sm underline"
-                    >
-                      Session
-                    </Link>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Course / Section</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {history.data.items.map((record) => {
+                  const captured = record.attendanceSessionStudent;
+                  const session = captured.attendanceSession;
+                  return (
+                    <TableRow key={record.id}>
+                      <TableCell>
+                        <strong>{captured.student.fullName}</strong>
+                        <span className="block">
+                          {captured.student.studentId}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {session.section.course.code} · Section{' '}
+                        {session.section.sectionCode}
+                      </TableCell>
+                      <TableCell>{session.date.slice(0, 10)}</TableCell>
+                      <TableCell>
+                        <Badge
+                          className={`ic-status ic-status-${record.status.toLowerCase()}`}
+                        >
+                          {record.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          href={`/attendance/${session.id}`}
+                          className="ic-link"
+                        >
+                          Open →
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
           <div className="flex items-center justify-between gap-3 text-sm">
             <span className="text-zinc-500">
               Page {history.data.page} of {Math.max(history.data.totalPages, 1)}{' '}
               · {history.data.total} records
             </span>
             <div className="flex gap-2">
-              <button
+              <Button
                 type="button"
                 disabled={filters.page <= 1}
                 onClick={() =>
@@ -236,11 +278,12 @@ export function AttendanceReportPanel({
                     page: current.page - 1,
                   }))
                 }
+                variant="outline"
                 className="min-h-11 rounded-md border px-3 disabled:opacity-50 dark:border-zinc-700"
               >
                 Previous
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 disabled={filters.page >= history.data.totalPages}
                 onClick={() =>
@@ -249,10 +292,11 @@ export function AttendanceReportPanel({
                     page: current.page + 1,
                   }))
                 }
+                variant="outline"
                 className="min-h-11 rounded-md border px-3 disabled:opacity-50 dark:border-zinc-700"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         </>

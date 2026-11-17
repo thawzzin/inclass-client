@@ -1,5 +1,14 @@
 'use client';
 
+import { Label } from '@/src/components/ui/label';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from '@/src/components/ui/native-select';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -45,42 +54,44 @@ export function CourseForm({
   }
   return (
     <form
+      noValidate
       onSubmit={form.handleSubmit(submit)}
       className="grid gap-4 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800"
     >
       <h2 className="font-semibold">{course ? 'Edit course' : 'Add course'}</h2>
-      <label className="grid gap-2 text-sm font-medium">
+      <Label className="grid gap-2 text-sm font-medium">
         Course code
-        <input className={fieldClass} {...form.register('code')} />
+        <Input className={fieldClass} {...form.register('code')} />
         {form.formState.errors.code && (
           <span className="text-red-600">
             {form.formState.errors.code.message}
           </span>
         )}
-      </label>
-      <label className="grid gap-2 text-sm font-medium">
+      </Label>
+      <Label className="grid gap-2 text-sm font-medium">
         Course name
-        <input className={fieldClass} {...form.register('name')} />
+        <Input className={fieldClass} {...form.register('name')} />
         {form.formState.errors.name && (
           <span className="text-red-600">
             {form.formState.errors.name.message}
           </span>
         )}
-      </label>
+      </Label>
       <div className="flex gap-2">
-        <button
+        <Button
           disabled={form.formState.isSubmitting}
           className="rounded-md bg-zinc-950 px-4 py-2 text-sm text-white dark:bg-zinc-50 dark:text-zinc-950"
         >
           Save
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onClose}
+          variant="outline"
           className="rounded-md border px-4 py-2 text-sm"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -125,56 +136,58 @@ export function SectionForm({
   }
   return (
     <form
+      noValidate
       onSubmit={form.handleSubmit(submit)}
       className="grid gap-4 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800"
     >
       <h2 className="font-semibold">
         {section ? 'Edit section' : 'Add section'}
       </h2>
-      <label className="grid gap-2 text-sm font-medium">
+      <Label className="grid gap-2 text-sm font-medium">
         Course
-        <select
+        <NativeSelect
           disabled={Boolean(section)}
           className={fieldClass}
           {...form.register('courseId')}
         >
-          <option value="">Select course</option>
+          <NativeSelectOption value="">Select course</NativeSelectOption>
           {courses.map((course) => (
-            <option key={course.id} value={course.id}>
+            <NativeSelectOption key={course.id} value={course.id}>
               {course.code} — {course.name}
-            </option>
+            </NativeSelectOption>
           ))}
-        </select>
-      </label>
-      <label className="grid gap-2 text-sm font-medium">
+        </NativeSelect>
+      </Label>
+      <Label className="grid gap-2 text-sm font-medium">
         Section code
-        <input className={fieldClass} {...form.register('sectionCode')} />
-      </label>
-      <label className="grid gap-2 text-sm font-medium">
+        <Input className={fieldClass} {...form.register('sectionCode')} />
+      </Label>
+      <Label className="grid gap-2 text-sm font-medium">
         Teacher
-        <select className={fieldClass} {...form.register('teacherId')}>
-          <option value="">Select teacher</option>
+        <NativeSelect className={fieldClass} {...form.register('teacherId')}>
+          <NativeSelectOption value="">Select teacher</NativeSelectOption>
           {teachers.map((teacher) => (
-            <option key={teacher.id} value={teacher.id}>
+            <NativeSelectOption key={teacher.id} value={teacher.id}>
               {teacher.name}
-            </option>
+            </NativeSelectOption>
           ))}
-        </select>
-      </label>
+        </NativeSelect>
+      </Label>
       <div className="flex gap-2">
-        <button
+        <Button
           disabled={form.formState.isSubmitting}
           className="rounded-md bg-zinc-950 px-4 py-2 text-sm text-white dark:bg-zinc-50 dark:text-zinc-950"
         >
           Save
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onClose}
+          variant="outline"
           className="rounded-md border px-4 py-2 text-sm"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

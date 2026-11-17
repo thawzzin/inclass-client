@@ -1,5 +1,18 @@
 'use client';
 
+import { Badge } from '@/src/components/ui/badge';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/src/components/ui/table';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -45,38 +58,40 @@ export function CoursesPage() {
     return <p className="text-sm text-zinc-500">Loading courses…</p>;
   if (courses.isError || !courses.data)
     return (
-      <button
+      <Button
         type="button"
         onClick={() => void courses.refetch()}
+        variant="link"
         className="text-sm underline"
       >
         Unable to load courses. Retry
-      </button>
+      </Button>
     );
   const visible = filterCourses(courses.data, search);
   return (
     <section className="space-y-6">
-      <div className="flex items-end justify-between gap-3">
+      <div className="ic-page-heading">
         <div>
+          <div className="ic-eyebrow">ACADEMICS</div>
           <h1 className="text-2xl font-semibold">Courses</h1>
           <p className="mt-1 text-sm text-zinc-500">
             Manage the university course catalog.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={() => setCreating(true)}
           className="rounded-md bg-zinc-950 px-4 py-2 text-sm text-white dark:bg-zinc-50 dark:text-zinc-950"
         >
           Add course
-        </button>
+        </Button>
       </div>
-      <input
+      <Input
         aria-label="Search courses"
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder="Search code or name"
-        className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700"
+        className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700 max-w-xs"
       />
       {(creating || editing) && (
         <CourseForm
@@ -93,37 +108,44 @@ export function CoursesPage() {
         />
       )}
       <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-zinc-50 text-zinc-500 dark:bg-zinc-900">
-            <tr>
-              <th className="p-3">Code</th>
-              <th className="p-3">Name</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="w-full text-left text-sm">
+          <TableHeader className="bg-zinc-50 text-zinc-500 dark:bg-zinc-900">
+            <TableRow>
+              <TableHead className="p-3">Code</TableHead>
+              <TableHead className="p-3">Name</TableHead>
+              <TableHead className="p-3">Status</TableHead>
+              <TableHead className="p-3">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {visible.map((course) => (
-              <tr
+              <TableRow
                 key={course.id}
                 className="border-t border-zinc-200 dark:border-zinc-800"
               >
-                <td className="p-3 font-medium">
+                <TableCell className="p-3 font-medium">
                   <Link href={`/courses/${course.id}`} className="underline">
                     {course.code}
                   </Link>
-                </td>
-                <td className="p-3">{course.name}</td>
-                <td className="p-3">{course.status}</td>
-                <td className="p-3">
-                  <button
+                </TableCell>
+                <TableCell className="p-3">{course.name}</TableCell>
+                <TableCell className="p-3">
+                  <Badge
+                    className={`ic-status ${course.status === 'INACTIVE' ? 'ic-status-inactive' : ''}`}
+                  >
+                    {course.status === 'ACTIVE' ? 'Active' : 'Inactive'}
+                  </Badge>
+                </TableCell>
+                <TableCell className="p-3">
+                  <Button
                     type="button"
                     onClick={() => setEditing(course)}
+                    variant="link"
                     className="mr-3 underline"
                   >
                     Edit
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     disabled={status.isPending}
                     onClick={() =>
@@ -133,15 +155,16 @@ export function CoursesPage() {
                           course.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
                       })
                     }
+                    variant="link"
                     className="underline"
                   >
                     {course.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
-                  </button>
-                </td>
-              </tr>
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       {visible.length === 0 && (
         <p className="text-sm text-zinc-500">No courses match your search.</p>

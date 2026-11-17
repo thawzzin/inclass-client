@@ -3,41 +3,72 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { cn } from '@/src/lib/utils';
-import { navigationForRole } from './navigation';
 import { useAuth } from '@/src/features/auth/auth-context';
+import { Avatar, AvatarFallback } from '@/src/components/ui/avatar';
+import { Brand } from './brand';
+import { navigationForRole } from './navigation';
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
   if (!user) return null;
 
+  const items = navigationForRole(user.role);
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-zinc-200 bg-white lg:block dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="flex h-16 items-center border-b border-zinc-200 px-6 dark:border-zinc-800">
-        <span className="text-lg font-semibold tracking-tight">InClass</span>
-      </div>
-      <nav aria-label="Main navigation" className="space-y-1 p-3">
-        {navigationForRole(user.role).map((item) => {
-          const active =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
-          return (
+    <aside className="ic-sidebar">
+      <Brand />
+      <nav aria-label="Main navigation" className="ic-sidebar-nav">
+        <p className="ic-nav-label">WORKSPACE</p>
+        {items
+          .filter((item) => item.href !== '/settings')
+          .map((item) => {
+            const active =
+              pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                className={`ic-nav-item${active ? ' is-active' : ''}`}
+              >
+                <item.icon aria-hidden="true" size={19} strokeWidth={1.8} />
+                {item.label}
+              </Link>
+            );
+          })}
+      </nav>
+      <div className="ic-sidebar-bottom">
+        <p className="ic-nav-label">PREFERENCES</p>
+        {items
+          .filter((item) => item.href === '/settings')
+          .map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={cn(
-                'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium',
-                active
-                  ? 'bg-zinc-100 text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50'
-                  : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50',
-              )}
+              aria-current={pathname === item.href ? 'page' : undefined}
+              className={`ic-nav-item${pathname === item.href ? ' is-active' : ''}`}
             >
-              <item.icon aria-hidden="true" className="size-4" />
+              <item.icon aria-hidden="true" size={19} strokeWidth={1.8} />
               {item.label}
             </Link>
-          );
-        })}
-      </nav>
+          ))}
+        <div className="ic-profile">
+          <Avatar className="ic-avatar">
+            <AvatarFallback>
+              {user.name
+                .split(/\s+/)
+                .map((part) => part[0])
+                .slice(0, 2)
+                .join('')
+                .toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <span>
+            <strong>{user.name}</strong>
+            <small>{user.role === 'ADMIN' ? 'Administrator' : 'Teacher'}</small>
+          </span>
+        </div>
+      </div>
     </aside>
   );
 }

@@ -1,122 +1,81 @@
 'use client';
 
+import { Badge } from '@/src/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
+import { Card } from '@/src/components/ui/card';
+import { Skeleton } from '@/src/components/ui/skeleton';
+
+import { Button } from '@/src/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/src/components/ui/table';
+
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, CalendarCheck } from 'lucide-react';
+import { BookOpen, CalendarCheck, GraduationCap, Users } from 'lucide-react';
 import Link from 'next/link';
 
 import { academicsApi } from '@/src/features/academics/academics.api';
-import { AttendanceStatisticsSummary } from '@/src/features/attendance/attendance-statistics-summary';
 import { useAuth } from '@/src/features/auth/auth-context';
 import { queryKeys } from '@/src/lib/api/query-keys';
-import type {
-  AttendanceStatistics,
-  DashboardRecentAttendance,
-} from '@/src/lib/api/types';
+import type { DashboardRecentAttendance } from '@/src/lib/api/types';
 
-import { dashboardCards, dashboardQuickLinks } from './dashboard-contract';
+import { dashboardCards } from './dashboard-contract';
 import { dashboardApi } from './dashboard.api';
 
-function DashboardLoading() {
-  return (
-    <div className="space-y-6" aria-busy="true" aria-label="Loading dashboard">
-      <div className="h-16 animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-900" />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {Array.from({ length: 5 }, (_, index) => (
-          <div
-            key={index}
-            className="h-24 animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-900"
-          />
-        ))}
-      </div>
-      <div className="h-64 animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-900" />
-    </div>
-  );
-}
+const icons = [GraduationCap, Users, BookOpen, CalendarCheck, CalendarCheck];
 
-function AttendanceOverview({
-  statistics,
-}: {
-  statistics: AttendanceStatistics;
-}) {
-  return (
-    <section className="space-y-4" aria-labelledby="attendance-overview-title">
-      <div>
-        <h2 id="attendance-overview-title" className="font-semibold">
-          Attendance overview
-        </h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Role-scoped totals across all recorded sessions.
-        </p>
-      </div>
-      <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-        <div className="flex items-center justify-between gap-3 text-sm">
-          <label htmlFor="attendance-progress" className="font-medium">
-            Attendance percentage
-          </label>
-          <span>
-            {statistics.attendancePercentage === null
-              ? 'No marked records'
-              : `${statistics.attendancePercentage.toFixed(1)}%`}
-          </span>
-        </div>
-        <progress
-          id="attendance-progress"
-          max={100}
-          value={statistics.attendancePercentage ?? 0}
-          className="mt-3 h-2 w-full accent-zinc-950 dark:accent-zinc-50"
-        />
-      </div>
-      <AttendanceStatisticsSummary statistics={statistics} />
-    </section>
-  );
-}
-
-function RecentAttendance({
+function RecentSessions({
   sessions,
 }: {
   sessions: DashboardRecentAttendance[];
 }) {
   return (
-    <section aria-labelledby="recent-attendance-title">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 id="recent-attendance-title" className="font-semibold">
-          Recent attendance activity
-        </h2>
-        <Link
-          href="/attendance"
-          className="inline-flex min-h-11 items-center gap-1 text-sm underline"
-        >
-          View all <ArrowRight className="size-4" aria-hidden="true" />
+    <section className="ic-panel ic-recent" aria-labelledby="recent-title">
+      <div className="ic-panel-head">
+        <h2 id="recent-title">Recent attendance sessions</h2>
+        <Link href="/history" className="ic-link">
+          View all →
         </Link>
       </div>
       {sessions.length ? (
-        <ul className="divide-y rounded-lg border border-zinc-200 dark:border-zinc-800">
-          {sessions.map((session) => (
-            <li key={session.id}>
-              <Link
-                href={`/attendance/${session.id}`}
-                className="grid min-h-16 gap-2 p-4 hover:bg-zinc-50 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center dark:hover:bg-zinc-900"
-              >
-                <div>
-                  <p className="font-medium">
-                    {session.section.course.code} · Section{' '}
-                    {session.section.sectionCode}
-                  </p>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    {session.date.slice(0, 10)} · Created by{' '}
-                    {session.createdBy.name}
-                  </p>
-                </div>
-                <span className="text-sm text-zinc-500">
-                  {session._count.roster} captured student
-                  {session._count.roster === 1 ? '' : 's'}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Course / Section</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Students</TableHead>
+                <TableHead>Recorded by</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sessions.slice(0, 5).map((session) => (
+                <TableRow key={session.id}>
+                  <TableCell>
+                    <Link href={`/attendance/${session.id}`}>
+                      {session.section.course.code} · Section{' '}
+                      {session.section.sectionCode}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{session.date.slice(0, 10)}</TableCell>
+                  <TableCell>{session._count.roster} students</TableCell>
+                  <TableCell>{session.createdBy.name}</TableCell>
+                  <TableCell>
+                    <Badge className="ic-status">Recorded</Badge>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       ) : (
-        <p className="rounded-lg border border-dashed p-8 text-center text-sm text-zinc-500">
+        <p className="text-zinc-500">
           No attendance sessions have been created.
         </p>
       )}
@@ -148,7 +107,19 @@ export function DashboardPage() {
   });
 
   if (!user || summary.isLoading || statistics.isLoading || recent.isLoading)
-    return <DashboardLoading />;
+    return (
+      <div
+        aria-busy="true"
+        aria-label="Loading dashboard"
+        className="space-y-5"
+      >
+        <Skeleton className="h-16 rounded-xl" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-28 rounded-xl" />
+          <Skeleton className="h-28 rounded-xl" />
+        </div>
+      </div>
+    );
   if (
     summary.isError ||
     statistics.isError ||
@@ -156,133 +127,200 @@ export function DashboardPage() {
     !summary.data ||
     !statistics.data ||
     !recent.data
-  ) {
+  )
     return (
-      <div
-        role="alert"
-        className="rounded-lg border border-red-200 p-5 dark:border-red-900"
-      >
-        <h1 className="font-semibold">Unable to load dashboard</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          The dashboard data could not be retrieved.
-        </p>
-        <button
+      <Alert variant="destructive" className="ic-panel">
+        <AlertTitle>
+          <h1>Unable to load dashboard</h1>
+        </AlertTitle>
+        <AlertDescription>
+          Dashboard data could not be retrieved.
+        </AlertDescription>
+        <Button
           type="button"
           onClick={() => {
             void summary.refetch();
             void statistics.refetch();
             void recent.refetch();
           }}
-          className="mt-4 min-h-11 rounded-md border px-4 text-sm dark:border-zinc-700"
         >
           Retry
-        </button>
-      </div>
+        </Button>
+      </Alert>
     );
-  }
 
-  const cards = dashboardCards(user.role, summary.data);
-  const quickLinks = dashboardQuickLinks(user.role);
+  const cards = dashboardCards(user.role, summary.data).slice(0, 4);
+  const stats = statistics.data;
+  const total = stats.present + stats.late + stats.absent;
+  const presentEnd = total ? (stats.present / total) * 100 : 0;
+  const lateEnd = total ? ((stats.present + stats.late) / total) * 100 : 0;
+  const plotted = [...recent.data].reverse().slice(-7);
+  const maxRoster = Math.max(1, ...plotted.map((item) => item._count.roster));
 
   return (
-    <div className="space-y-8">
-      <header>
-        <p className="text-sm text-zinc-500">
-          {user.role === 'ADMIN'
-            ? 'Administration overview'
-            : 'Teaching overview'}
-        </p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-          Welcome back, {user.name}
-        </h1>
-      </header>
-
-      <section
-        aria-label="Dashboard summary"
-        className={`grid gap-3 sm:grid-cols-2 ${user.role === 'ADMIN' ? 'lg:grid-cols-5' : 'lg:grid-cols-3'}`}
-      >
-        {cards.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
-          >
-            <p className="text-sm text-zinc-500">{card.label}</p>
-            <p className="mt-2 text-2xl font-semibold">{card.value}</p>
+    <div>
+      <div className="ic-page-heading">
+        <div>
+          <div className="ic-eyebrow">
+            {new Intl.DateTimeFormat('en', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            }).format(new Date())}
           </div>
-        ))}
+          <h1>Good to see you, {user.name.split(' ')[0]} 👋</h1>
+          <p>Here&apos;s what&apos;s happening across your classes.</p>
+        </div>
+        <Link href="/attendance" className="ic-link">
+          View attendance ↗
+        </Link>
+      </div>
+      <section className="ic-metrics" aria-label="Dashboard summary">
+        {cards.map((card, index) => {
+          const Icon = icons[index];
+          return (
+            <Card className="ic-metric-card" key={card.label}>
+              <div className="ic-metric-top">
+                <span>{card.label}</span>
+                <span className="ic-metric-icon">
+                  <Icon size={19} aria-hidden="true" />
+                </span>
+              </div>
+              <div className="ic-metric-value">
+                {card.value.toLocaleString()}
+              </div>
+            </Card>
+          );
+        })}
       </section>
-
-      <nav
-        aria-label="Dashboard quick actions"
-        className="flex flex-wrap gap-2"
-      >
-        {quickLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="inline-flex min-h-11 items-center gap-2 rounded-md border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700"
-          >
-            {link.label}
-            <ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
-        ))}
-      </nav>
-
-      {user.role === 'TEACHER' && (
-        <section aria-labelledby="assigned-sections-title">
-          <h2 id="assigned-sections-title" className="mb-3 font-semibold">
-            Assigned sections
-          </h2>
-          {assignedSections.isLoading ? (
-            <p className="text-sm text-zinc-500">Loading assigned sections…</p>
-          ) : assignedSections.isError ? (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 p-4 dark:border-red-900"
-            >
-              <p className="text-sm">Unable to load assigned sections.</p>
-              <button
-                type="button"
-                onClick={() => void assignedSections.refetch()}
-                className="mt-3 min-h-11 rounded-md border px-4 text-sm dark:border-zinc-700"
+      <div className="ic-dashboard-grid">
+        <section className="ic-panel" aria-labelledby="chart-title">
+          <div className="ic-panel-head">
+            <h2 id="chart-title">Recent session sizes</h2>
+            <span className="text-zinc-500">
+              Last {plotted.length} sessions
+            </span>
+          </div>
+          {plotted.length ? (
+            <>
+              <div
+                className="ic-chart"
+                role="img"
+                aria-label={`Student rosters for ${plotted.length} recent attendance session${plotted.length === 1 ? '' : 's'}`}
               >
-                Retry
-              </button>
-            </div>
-          ) : assignedSections.data?.length ? (
-            <ul className="grid gap-3 md:grid-cols-2">
-              {assignedSections.data.map((section) => (
-                <li key={section.id}>
-                  <Link
-                    href={`/sections/${section.id}?tab=attendance`}
-                    className="flex min-h-20 items-center justify-between rounded-lg border border-zinc-200 p-4 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
-                  >
-                    <span>
-                      <span className="block font-medium">
-                        {section.course.code} · Section {section.sectionCode}
-                      </span>
-                      <span className="mt-1 block text-sm text-zinc-500">
-                        {section.course.name}
-                      </span>
-                    </span>
-                    <CalendarCheck
-                      className="size-5 text-zinc-500"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                {plotted.map((item) => (
+                  <div
+                    key={item.id}
+                    className="ic-chart-bar"
+                    title={`${item.section.course.code} section ${item.section.sectionCode}: ${item._count.roster} students`}
+                    style={{
+                      height: `${Math.max(2, (item._count.roster / maxRoster) * 100)}%`,
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="ic-chart-labels">
+                {plotted.map((item) => (
+                  <span key={item.id}>{item.section.sectionCode}</span>
+                ))}
+              </div>
+            </>
           ) : (
-            <p className="rounded-lg border border-dashed p-8 text-center text-sm text-zinc-500">
-              No sections are assigned.
+            <p className="py-20 text-center text-zinc-500">
+              No recent sessions to chart.
             </p>
           )}
         </section>
+        <section className="ic-panel" aria-labelledby="breakdown-title">
+          <div className="ic-panel-head">
+            <h2 id="breakdown-title">Attendance breakdown</h2>
+            <span className="text-zinc-500">All recorded sessions</span>
+          </div>
+          <div
+            className="ic-donut"
+            style={
+              total
+                ? ({
+                    '--present-end': `${presentEnd}%`,
+                    '--late-end': `${lateEnd}%`,
+                  } as React.CSSProperties)
+                : { background: 'var(--line)' }
+            }
+          >
+            <div className="ic-donut-inner">
+              <span>
+                <strong>
+                  {stats.attendancePercentage === null
+                    ? '—'
+                    : `${stats.attendancePercentage.toFixed(0)}%`}
+                </strong>
+                <small className="block">attendance</small>
+              </span>
+            </div>
+          </div>
+          <div className="ic-legend">
+            <span>
+              <i style={{ background: 'var(--primary)' }} />
+              Present {stats.present}
+            </span>
+            <span>
+              <i style={{ background: '#55c8a9' }} />
+              Late {stats.late}
+            </span>
+            <span>
+              <i style={{ background: '#f6bb62' }} />
+              Absent {stats.absent}
+            </span>
+          </div>
+        </section>
+      </div>
+      <RecentSessions sessions={recent.data} />
+      {user.role === 'TEACHER' && (
+        <section
+          className="ic-panel ic-recent"
+          aria-labelledby="assigned-title"
+        >
+          <div className="ic-panel-head">
+            <h2 id="assigned-title">Assigned sections</h2>
+            <Link href="/sections" className="ic-link">
+              View all →
+            </Link>
+          </div>
+          {assignedSections.isLoading ? (
+            <p className="text-zinc-500">Loading assigned sections…</p>
+          ) : assignedSections.isError ? (
+            <div role="alert">
+              <p>Unable to load assigned sections.</p>
+              <Button
+                type="button"
+                onClick={() => void assignedSections.refetch()}
+              >
+                Retry
+              </Button>
+            </div>
+          ) : assignedSections.data?.length ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              {assignedSections.data.map((section) => (
+                <Link
+                  href={`/sections/${section.id}?tab=attendance`}
+                  key={section.id}
+                  className="ic-panel"
+                >
+                  <strong>
+                    {section.course.code} · Section {section.sectionCode}
+                  </strong>
+                  <span className="block text-zinc-500">
+                    {section.course.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="text-zinc-500">No sections are assigned.</p>
+          )}
+        </section>
       )}
-
-      <AttendanceOverview statistics={statistics.data} />
-      <RecentAttendance sessions={recent.data} />
     </div>
   );
 }

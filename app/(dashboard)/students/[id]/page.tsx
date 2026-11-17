@@ -37,6 +37,7 @@ export default function StudentDetailPage() {
         Back to students
       </Link>
       <div>
+        <div className="ic-eyebrow">PEOPLE</div>
         <h1 className="text-2xl font-semibold">{student.data.fullName}</h1>
         <p className="mt-1 text-sm text-zinc-500">
           {student.data.studentId}

@@ -1,5 +1,10 @@
 'use client';
 
+import { Label } from '@/src/components/ui/label';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -52,24 +57,25 @@ export function TeacherForm({
 
   return (
     <form
+      noValidate
       onSubmit={form.handleSubmit(submit)}
       className="grid gap-4 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800"
     >
       <h2 className="font-semibold">
         {teacher ? 'Edit teacher' : 'Add teacher'}
       </h2>
-      <label className="grid gap-2 text-sm font-medium">
+      <Label className="grid gap-2 text-sm font-medium">
         Name
-        <input className={fieldClass} {...form.register('name')} />
+        <Input className={fieldClass} {...form.register('name')} />
         {form.formState.errors.name && (
           <span className="text-red-600">
             {form.formState.errors.name.message}
           </span>
         )}
-      </label>
-      <label className="grid gap-2 text-sm font-medium">
+      </Label>
+      <Label className="grid gap-2 text-sm font-medium">
         Email
-        <input
+        <Input
           type="email"
           className={fieldClass}
           {...form.register('email')}
@@ -79,11 +85,11 @@ export function TeacherForm({
             {form.formState.errors.email.message}
           </span>
         )}
-      </label>
+      </Label>
       {!teacher && (
-        <label className="grid gap-2 text-sm font-medium">
+        <Label className="grid gap-2 text-sm font-medium">
           Password
-          <input
+          <Input
             type="password"
             autoComplete="new-password"
             className={fieldClass}
@@ -94,22 +100,23 @@ export function TeacherForm({
               {form.formState.errors.password?.message}
             </span>
           )}
-        </label>
+        </Label>
       )}
       <div className="flex gap-2">
-        <button
+        <Button
           disabled={form.formState.isSubmitting}
           className="rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950"
         >
           Save
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onClose}
+          variant="outline"
           className="rounded-md border px-4 py-2 text-sm"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -141,6 +148,7 @@ export function TeacherPasswordForm({
   }
   return (
     <form
+      noValidate
       onSubmit={form.handleSubmit(submit)}
       className="grid gap-4 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800"
     >
@@ -150,18 +158,18 @@ export function TeacherPasswordForm({
           Set a new password for {teacher.name}.
         </p>
       </div>
-      <label className="grid gap-2 text-sm font-medium">
+      <Label className="grid gap-2 text-sm font-medium">
         New password
-        <input
+        <Input
           type="password"
           autoComplete="new-password"
           className={fieldClass}
           {...form.register('newPassword')}
         />
-      </label>
-      <label className="grid gap-2 text-sm font-medium">
+      </Label>
+      <Label className="grid gap-2 text-sm font-medium">
         Confirm password
-        <input
+        <Input
           type="password"
           autoComplete="new-password"
           className={fieldClass}
@@ -172,21 +180,22 @@ export function TeacherPasswordForm({
             {form.formState.errors.confirmPassword.message}
           </span>
         )}
-      </label>
+      </Label>
       <div className="flex gap-2">
-        <button
+        <Button
           disabled={form.formState.isSubmitting}
           className="rounded-md bg-zinc-950 px-4 py-2 text-sm text-white dark:bg-zinc-50 dark:text-zinc-950"
         >
           Change password
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onClose}
+          variant="outline"
           className="rounded-md border px-4 py-2 text-sm"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

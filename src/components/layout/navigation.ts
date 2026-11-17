@@ -3,6 +3,7 @@ import {
   BookOpen,
   CalendarCheck,
   GraduationCap,
+  History,
   LayoutDashboard,
   Settings,
   Users,
@@ -20,6 +21,7 @@ const common: NavigationItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/sections', label: 'My Sections', icon: BookOpen },
   { href: '/attendance', label: 'Attendance', icon: CalendarCheck },
+  { href: '/history', label: 'History', icon: History },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -33,6 +35,7 @@ export function navigationForRole(role: Role): NavigationItem[] {
     { href: '/courses', label: 'Courses', icon: BookOpen },
     { href: '/sections', label: 'Sections', icon: BookOpen },
     { href: '/attendance', label: 'Attendance', icon: CalendarCheck },
+    { href: '/history', label: 'History', icon: History },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];
 }

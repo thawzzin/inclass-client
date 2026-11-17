@@ -8,6 +8,7 @@ describe('navigationForRole', () => {
       '/dashboard',
       '/sections',
       '/attendance',
+      '/history',
       '/settings',
     ]);
   });

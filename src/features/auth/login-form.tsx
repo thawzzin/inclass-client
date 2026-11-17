@@ -1,5 +1,10 @@
 'use client';
 
+import { Label } from '@/src/components/ui/label';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -33,10 +38,10 @@ export function LoginForm() {
   return (
     <form onSubmit={form.handleSubmit(submit)} className="space-y-5" noValidate>
       <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium">
+        <Label htmlFor="email" className="text-sm font-medium">
           Email
-        </label>
-        <input
+        </Label>
+        <Input
           id="email"
           type="email"
           autoComplete="email"
@@ -54,10 +59,10 @@ export function LoginForm() {
         )}
       </div>
       <div className="space-y-2">
-        <label htmlFor="password" className="text-sm font-medium">
+        <Label htmlFor="password" className="text-sm font-medium">
           Password
-        </label>
-        <input
+        </Label>
+        <Input
           id="password"
           type="password"
           autoComplete="current-password"
@@ -74,13 +79,13 @@ export function LoginForm() {
           </p>
         )}
       </div>
-      <button
+      <Button
         type="submit"
         disabled={form.formState.isSubmitting}
         className="w-full rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950"
       >
         {form.formState.isSubmitting ? 'Signing in…' : 'Sign in'}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -1,5 +1,17 @@
 'use client';
 
+import { Button } from '@/src/components/ui/button';
+import { Card } from '@/src/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/src/components/ui/dialog';
+import { Progress } from '@/src/components/ui/progress';
+import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Check, Clock3, Save, UserX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -25,12 +37,6 @@ import { submitAttendanceChanges } from './attendance-workflow';
 
 const statuses: AttendanceStatus[] = ['PRESENT', 'ABSENT', 'LATE'];
 
-const statusStyles: Record<AttendanceStatus, string> = {
-  PRESENT: 'border-emerald-600 bg-emerald-600 text-white',
-  ABSENT: 'border-red-600 bg-red-600 text-white',
-  LATE: 'border-amber-500 bg-amber-500 text-zinc-950',
-};
-
 function displayDate(date: string): string {
   return new Intl.DateTimeFormat(undefined, {
     year: 'numeric',
@@ -50,13 +56,13 @@ function SummaryCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+    <Card className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
       <div className="flex items-center justify-between text-sm text-zinc-500">
         <span>{label}</span>
         {icon}
       </div>
       <p className="mt-2 text-2xl font-semibold">{value}</p>
-    </div>
+    </Card>
   );
 }
 
@@ -75,6 +81,7 @@ function AttendanceEditor({
   const [baseline, setBaseline] = useState(() =>
     createAttendanceDraft(detail.roster),
   );
+  const [confirmLeave, setConfirmLeave] = useState(false);
   const summary = attendanceSummary(draft);
   const dirty = useMemo(
     () =>
@@ -142,12 +149,8 @@ function AttendanceEditor({
   });
 
   function leaveForSection() {
-    if (
-      dirty &&
-      !window.confirm(
-        'You have unsaved attendance changes. Leave without saving?',
-      )
-    ) {
+    if (dirty) {
+      setConfirmLeave(true);
       return;
     }
     router.push(`/sections/${section.id}`);
@@ -155,13 +158,14 @@ function AttendanceEditor({
 
   return (
     <section className="space-y-6">
-      <button
+      <Button
         type="button"
         onClick={leaveForSection}
+        variant="link"
         className="inline-flex min-h-10 items-center gap-2 text-sm underline"
       >
         <ArrowLeft className="size-4" aria-hidden="true" /> Back to section
-      </button>
+      </Button>
 
       <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div>
@@ -175,17 +179,18 @@ function AttendanceEditor({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button
+          <Button
             type="button"
             disabled={!summary.unmarked || save.isPending}
             onClick={() =>
               setDraft((current) => markAllUnmarkedPresent(current))
             }
+            variant="outline"
             className="min-h-10 rounded-md border border-zinc-300 px-4 py-2 text-sm disabled:opacity-50 dark:border-zinc-700"
           >
             Mark all unmarked present
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={!dirty || save.isPending}
             onClick={() => save.mutate()}
@@ -193,23 +198,14 @@ function AttendanceEditor({
           >
             <Save className="size-4" aria-hidden="true" />
             {save.isPending ? 'Saving…' : 'Save attendance'}
-          </button>
+          </Button>
         </div>
       </div>
 
-      <div
-        className="h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"
-        aria-hidden="true"
-      >
-        <div
-          className="h-full bg-zinc-950 transition-[width] dark:bg-zinc-50"
-          style={{
-            width: summary.total
-              ? `${(summary.marked / summary.total) * 100}%`
-              : '0%',
-          }}
-        />
-      </div>
+      <Progress
+        value={summary.total ? (summary.marked / summary.total) * 100 : 0}
+        aria-label="Attendance marking progress"
+      />
       <p className="sr-only" aria-live="polite">
         {summary.marked} of {summary.total} students marked.
       </p>
@@ -251,37 +247,29 @@ function AttendanceEditor({
                   {entry.student.nickname ? ` · ${entry.student.nickname}` : ''}
                 </p>
               </div>
-              <div
-                role="radiogroup"
+              <RadioGroup
                 aria-label={`Attendance status for ${entry.student.fullName}`}
                 className="grid grid-cols-3 gap-2"
+                value={draft[entry.studentId] ?? ''}
+                onValueChange={(status) =>
+                  setDraft((current) => ({
+                    ...current,
+                    [entry.studentId]: status as AttendanceStatus,
+                  }))
+                }
+                disabled={save.isPending}
               >
-                {statuses.map((status) => {
-                  const selected = draft[entry.studentId] === status;
-                  return (
-                    <button
-                      key={status}
-                      type="button"
-                      role="radio"
-                      aria-checked={selected}
-                      disabled={save.isPending}
-                      onClick={() =>
-                        setDraft((current) => ({
-                          ...current,
-                          [entry.studentId]: status,
-                        }))
-                      }
-                      className={`min-h-10 rounded-md border px-3 py-2 text-xs font-medium sm:text-sm ${
-                        selected
-                          ? statusStyles[status]
-                          : 'border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900'
-                      }`}
-                    >
-                      {status[0] + status.slice(1).toLowerCase()}
-                    </button>
-                  );
-                })}
-              </div>
+                {statuses.map((status) => (
+                  <RadioGroupItem
+                    key={status}
+                    value={status}
+                    className={`ic-attendance-choice ${status.toLowerCase()}`}
+                    aria-label={status[0] + status.slice(1).toLowerCase()}
+                  >
+                    {status[0] + status.slice(1).toLowerCase()}
+                  </RadioGroupItem>
+                ))}
+              </RadioGroup>
             </li>
           ))}
         </ul>
@@ -290,6 +278,32 @@ function AttendanceEditor({
           This session captured no active enrolled students.
         </p>
       )}
+      <Dialog open={confirmLeave} onOpenChange={setConfirmLeave}>
+        <DialogContent className="border-border bg-card text-card-foreground">
+          <DialogHeader>
+            <DialogTitle>Leave without saving?</DialogTitle>
+            <DialogDescription>
+              Your attendance changes have not been saved.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setConfirmLeave(false)}
+            >
+              Keep editing
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => router.push(`/sections/${section.id}`)}
+            >
+              Leave without saving
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
@@ -311,16 +325,17 @@ export function AttendanceTakingPage({ id }: { id: string }) {
   }
   if (session.isError || section.isError || !session.data || !section.data) {
     return (
-      <button
+      <Button
         type="button"
         onClick={() => {
           void session.refetch();
           if (sectionId) void section.refetch();
         }}
+        variant="link"
         className="text-sm underline"
       >
         Unable to load this attendance session. Retry
-      </button>
+      </Button>
     );
   }
 

@@ -1,5 +1,6 @@
 import { attendancePercentageLabel } from './attendance-report';
 import type { AttendanceStatistics } from '@/src/lib/api/types';
+import { Card } from '@/src/components/ui/card';
 
 export function AttendanceStatisticsSummary({
   statistics,
@@ -17,13 +18,13 @@ export function AttendanceStatisticsSummary({
   return (
     <dl className="grid grid-cols-2 gap-3 lg:grid-cols-5">
       {values.map(([label, value]) => (
-        <div
+        <Card
           key={label}
           className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
         >
           <dt className="text-sm text-zinc-500">{label}</dt>
           <dd className="mt-1 text-xl font-semibold">{value}</dd>
-        </div>
+        </Card>
       ))}
     </dl>
   );

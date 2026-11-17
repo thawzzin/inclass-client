@@ -1,5 +1,14 @@
 'use client';
 
+import { Label } from '@/src/components/ui/label';
+
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from '@/src/components/ui/native-select';
+
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -51,27 +60,27 @@ export function StudentAttendanceHistory({ studentId }: { studentId: string }) {
         </p>
       </div>
       <div className="grid gap-3 rounded-lg border border-zinc-200 p-4 sm:grid-cols-3 dark:border-zinc-800">
-        <label className="grid gap-1 text-sm">
+        <Label className="grid gap-1 text-sm">
           <span>From</span>
-          <input
+          <Input
             type="date"
             value={dateFrom}
             onChange={(event) => setDateFrom(event.target.value)}
             className="min-h-11 rounded-md border border-zinc-300 bg-transparent px-3 dark:border-zinc-700"
           />
-        </label>
-        <label className="grid gap-1 text-sm">
+        </Label>
+        <Label className="grid gap-1 text-sm">
           <span>To</span>
-          <input
+          <Input
             type="date"
             value={dateTo}
             onChange={(event) => setDateTo(event.target.value)}
             className="min-h-11 rounded-md border border-zinc-300 bg-transparent px-3 dark:border-zinc-700"
           />
-        </label>
-        <label className="grid gap-1 text-sm">
+        </Label>
+        <Label className="grid gap-1 text-sm">
           <span>Status</span>
-          <select
+          <NativeSelect
             value={status}
             onChange={(event) =>
               setStatus(event.target.value as StudentAttendanceStatus)
@@ -79,12 +88,12 @@ export function StudentAttendanceHistory({ studentId }: { studentId: string }) {
             className="min-h-11 rounded-md border border-zinc-300 bg-transparent px-3 dark:border-zinc-700"
           >
             {statusOptions.map((option) => (
-              <option key={option || 'all'} value={option}>
+              <NativeSelectOption key={option || 'all'} value={option}>
                 {option || 'All statuses'}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
-        </label>
+          </NativeSelect>
+        </Label>
       </div>
       {!validRange && (
         <p role="alert" className="text-sm text-red-700 dark:text-red-400">
@@ -100,13 +109,14 @@ export function StudentAttendanceHistory({ studentId }: { studentId: string }) {
           Loading attendance history…
         </p>
       ) : history.isError ? (
-        <button
+        <Button
           type="button"
           onClick={() => void history.refetch()}
+          variant="link"
           className="text-sm underline"
         >
           Unable to load attendance history. Retry
-        </button>
+        </Button>
       ) : items.length ? (
         <ul className="divide-y rounded-lg border border-zinc-200 dark:border-zinc-800">
           {items.map((item) => {

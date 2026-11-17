@@ -5,6 +5,10 @@
   "scripts": {
     "dev": "next dev --port 4001",
     "build": "next build",
+    "build:worker": "next build --webpack && opennextjs-cloudflare build --skipNextBuild",
+    "preview:worker": "pnpm build:worker && opennextjs-cloudflare preview",
+    "deploy": "pnpm build:worker && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "eslint",
@@ -30,6 +34,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "1.20.16",
     "@tailwindcss/turbopack": "^4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
@@ -44,7 +49,8 @@
     "prettier": "^3.10.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "wrangler": "4.158.0"
   },
   "packageManager": "pnpm@10.27.0"
 }

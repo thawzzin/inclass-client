@@ -81,7 +81,9 @@ Tests use Vitest, React Testing Library, and verified backend-shaped fixtures. T
 
 ## Production deployment
 
+- Install dependencies, then run `pnpm build:worker` to create the OpenNext Worker bundle. Run `pnpm preview:worker` for a local Workers preview and `pnpm deploy` to build and publish it. These commands use `wrangler.jsonc` and require Cloudflare authentication for deployment.
 - Set `NEXT_PUBLIC_API_URL` at build time to the public backend `/api/v1` URL.
+- Use a frontend hostname and backend hostname under the same registrable domain, such as `app.example.com` and `api.example.com`. Authentication cookies use `SameSite=Lax` and need a same-site deployment. Set the backend `FRONTEND_URL` to the exact frontend origin.
 - Serve the frontend and backend over HTTPS.
 - Configure the backend `FRONTEND_URL` to the exact deployed frontend origin.
 - Configure backend production cookies and trusted-proxy behavior for the actual hosting topology.

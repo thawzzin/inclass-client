@@ -18,27 +18,15 @@ The application is a Next.js App Router project written in strict TypeScript. It
    pnpm install
    ```
 
-2. Create the frontend environment file:
+2. Configure and start `../inclass-backend` with `pnpm dev` on port 4000. Its `FRONTEND_URL` must match the frontend origin (`http://localhost:4001` for local development). In development, the frontend forwards `/api/v1/*` to the local backend; deployed Workers use a Service Binding.
 
-   ```bash
-   cp .env.example .env
-   ```
-
-3. Confirm that `NEXT_PUBLIC_API_URL` points to the backend API prefix. The default is:
-
-   ```dotenv
-   NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
-   ```
-
-4. Configure and start `../inclass-backend` by following its README. Its `FRONTEND_URL` must exactly match the frontend origin (normally `http://localhost:3000`) so credentialed CORS and authentication cookies work.
-
-5. Start the frontend:
+3. Start the frontend:
 
    ```bash
    pnpm dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000). The API health endpoint is [http://localhost:4000/api/v1/health](http://localhost:4000/api/v1/health).
+Open [http://localhost:4001](http://localhost:4001). The proxied API health endpoint is [http://localhost:4001/api/v1/health](http://localhost:4001/api/v1/health).
 
 ## Authentication and API integration
 
@@ -82,11 +70,10 @@ Tests use Vitest, React Testing Library, and verified backend-shaped fixtures. T
 ## Production deployment
 
 - Install dependencies, then run `pnpm build:worker` to create the OpenNext Worker bundle. Run `pnpm preview:worker` for a local Workers preview and `pnpm deploy` to build and publish it. These commands use `wrangler.jsonc` and require Cloudflare authentication for deployment.
-- Set `NEXT_PUBLIC_API_URL` at build time to the public backend `/api/v1` URL.
-- Use a frontend hostname and backend hostname under the same registrable domain, such as `app.example.com` and `api.example.com`. Authentication cookies use `SameSite=Lax` and need a same-site deployment. Set the backend `FRONTEND_URL` to the exact frontend origin.
-- Serve the frontend and backend over HTTPS.
-- Configure the backend `FRONTEND_URL` to the exact deployed frontend origin.
-- Configure backend production cookies and trusted-proxy behavior for the actual hosting topology.
+- For Cloudflare Git deployment, use `pnpm build:worker` as the build command and `pnpm exec opennextjs-cloudflare deploy` as the deploy command so the build runs once.
+- The browser always uses `/api/v1`; remove any obsolete `NEXT_PUBLIC_API_URL` build variable.
+- Deploy the backend Worker first. This frontend's `API` Service Binding targets `inclass-backend`; `/api/v1/*` requests are forwarded to it and response cookies stay on the frontend's `workers.dev` origin.
+- Set backend `FRONTEND_URL` to the exact frontend `workers.dev` HTTPS origin.
 - Apply backend migrations before directing traffic to a new API release.
 - Run all frontend and backend quality gates in CI.
 - Verify login, refresh, logout, role access, CSRF-protected writes, attendance creation/update, and the duplicate-session conflict flow against a non-production database.

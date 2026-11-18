@@ -8,8 +8,9 @@ checked-in `../inclass-backend/openapi.yaml` is a starter document and describes
 login, attendance-record history, and two dashboard routes; it must not be used as the sole
 source for generated client types.
 
-Base URL: `http://localhost:4000/api/v1` by default. The backend permits credentialed CORS only
-from its configured `FRONTEND_URL`, which defaults to `http://localhost:3000`.
+Browser base URL: `/api/v1`. The frontend Worker forwards this path to the backend Worker
+through a Service Binding. The backend permits credentialed requests from its configured
+`FRONTEND_URL`, which must match the frontend origin (`http://localhost:4001` locally).
 
 ## Shared protocol
 

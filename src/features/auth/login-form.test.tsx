@@ -24,7 +24,7 @@ describe('LoginForm accessibility', () => {
     expect(email).toHaveAccessibleDescription('Enter a valid email address.');
     expect(password).toHaveAttribute('aria-invalid', 'true');
     expect(password).toHaveAccessibleDescription(
-      'Password must be at least 12 characters.',
+      'Password must be at least 6 characters.',
     );
   });
 });

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --port 4001",
     "build": "next build",
-    "build:worker": "next build --webpack && opennextjs-cloudflare build --skipNextBuild",
+    "build:worker": "next build && opennextjs-cloudflare build --skipNextBuild",
     "preview:worker": "pnpm build:worker && opennextjs-cloudflare preview",
     "deploy": "pnpm build:worker && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --include-runtime=false --env-interface CloudflareEnv cloudflare-env.d.ts",

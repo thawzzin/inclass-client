@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Button } from '@/src/components/ui/button';
 
 import { useQuery } from '@tanstack/react-query';
@@ -27,7 +28,7 @@ export function AttendancePage() {
         </div>
       </div>
       {sections.isLoading ? (
-        <p className="text-sm text-zinc-500">Loading sections…</p>
+        <LoadingState label="Loading sections" compact />
       ) : sections.isError || !sections.data ? (
         <Button
           type="button"

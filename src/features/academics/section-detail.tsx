@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import {
   Tabs,
   TabsContent,
@@ -31,8 +32,7 @@ export function SectionDetail({
     queryKey: queryKeys.sections.detail(id),
     queryFn: () => academicsApi.section(id),
   });
-  if (section.isLoading)
-    return <p className="text-sm text-zinc-500">Loading section…</p>;
+  if (section.isLoading) return <LoadingState label="Loading section" />;
   if (section.isError || !section.data)
     return (
       <p className="text-sm text-zinc-500">Unable to load this section.</p>

@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Badge } from '@/src/components/ui/badge';
 import { Card } from '@/src/components/ui/card';
 
@@ -57,7 +58,7 @@ export function SectionsPage() {
     onError: () => toast.error('Unable to update section status.'),
   });
   if (sections.isLoading || courses.isLoading)
-    return <p className="text-sm text-zinc-500">Loading sections…</p>;
+    return <LoadingState label="Loading sections" />;
   if (sections.isError || courses.isError || !sections.data || !courses.data)
     return (
       <Button

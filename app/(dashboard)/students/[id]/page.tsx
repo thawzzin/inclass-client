@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -25,8 +26,7 @@ export default function StudentDetailPage() {
         You are not authorized to view student details.
       </p>
     );
-  if (student.isLoading)
-    return <p className="text-sm text-zinc-500">Loading student…</p>;
+  if (student.isLoading) return <LoadingState label="Loading student" />;
   if (student.isError || !student.data)
     return (
       <p className="text-sm text-zinc-500">Unable to load this student.</p>

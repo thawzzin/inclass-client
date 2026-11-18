@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Label } from '@/src/components/ui/label';
 
 import { Button } from '@/src/components/ui/button';
@@ -105,9 +106,7 @@ export function StudentAttendanceHistory({ studentId }: { studentId: string }) {
         <AttendanceStatisticsSummary statistics={history.data.statistics} />
       )}
       {history.isLoading ? (
-        <p className="text-sm text-zinc-500" aria-busy="true">
-          Loading attendance history…
-        </p>
+        <LoadingState label="Loading attendance history" compact />
       ) : history.isError ? (
         <Button
           type="button"

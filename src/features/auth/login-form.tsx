@@ -82,7 +82,7 @@ export function LoginForm() {
       <Button
         type="submit"
         disabled={form.formState.isSubmitting}
-        className="w-full rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950"
+        className="w-full rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950"
       >
         {form.formState.isSubmitting ? 'Signing in…' : 'Sign in'}
       </Button>

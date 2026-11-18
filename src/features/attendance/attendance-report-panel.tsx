@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Badge } from '@/src/components/ui/badge';
 
 import { Label } from '@/src/components/ui/label';
@@ -200,9 +201,7 @@ export function AttendanceReportPanel({
       )}
 
       {history.isLoading ? (
-        <p className="text-sm text-zinc-500" aria-busy="true">
-          Loading attendance records…
-        </p>
+        <LoadingState label="Loading attendance records" compact />
       ) : history.isError ? (
         <Button
           type="button"

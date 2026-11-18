@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Button } from '@/src/components/ui/button';
 import { Card } from '@/src/components/ui/card';
 import {
@@ -321,7 +322,7 @@ export function AttendanceTakingPage({ id }: { id: string }) {
   });
 
   if (session.isLoading || (sectionId && section.isLoading)) {
-    return <p className="text-sm text-zinc-500">Loading attendance roster…</p>;
+    return <LoadingState label="Loading attendance roster" />;
   }
   if (session.isError || section.isError || !session.data || !section.data) {
     return (

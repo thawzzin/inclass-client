@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Badge } from '@/src/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { Card } from '@/src/components/ui/card';
@@ -288,7 +289,7 @@ export function DashboardPage() {
             </Link>
           </div>
           {assignedSections.isLoading ? (
-            <p className="text-zinc-500">Loading assigned sections…</p>
+            <LoadingState label="Loading assigned sections" compact />
           ) : assignedSections.isError ? (
             <div role="alert">
               <p>Unable to load assigned sections.</p>

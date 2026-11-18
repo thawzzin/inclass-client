@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Badge } from '@/src/components/ui/badge';
 
 import { Button } from '@/src/components/ui/button';
@@ -54,8 +55,7 @@ export function CoursesPage() {
         You are not authorized to manage courses.
       </p>
     );
-  if (courses.isLoading)
-    return <p className="text-sm text-zinc-500">Loading courses…</p>;
+  if (courses.isLoading) return <LoadingState label="Loading courses" />;
   if (courses.isError || !courses.data)
     return (
       <Button

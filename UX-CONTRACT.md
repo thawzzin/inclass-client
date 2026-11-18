@@ -4,13 +4,14 @@ The existing backend contract and role permissions remain authoritative. The vis
 
 ## Canonical UI Map
 
-| Capability     | Canonical owner                    | Source of truth                    | Allowed variants                      | Verification                    |
-| -------------- | ---------------------------------- | ---------------------------------- | ------------------------------------- | ------------------------------- |
-| Select/Listbox | shadcn NativeSelect                | Existing feature filters and forms | Section, status, course               | Keyboard and browser check      |
-| Date           | Native date input                  | Attendance API date fields         | Session date, history range           | Date validation tests           |
-| Form           | shadcn fields with React Hook Form | Feature schemas and API errors     | Create, edit, account                 | Form tests and browser check    |
-| Toast          | shadcn Sonner provider             | `app/providers.tsx`                | Success, error                        | Interaction tests               |
-| CRUD           | Existing feature API modules       | `docs/API_INTEGRATION.md`          | Students, teachers, courses, sections | Feature tests and browser check |
+| Capability     | Canonical owner                    | Source of truth                       | Allowed variants                      | Verification                    |
+| -------------- | ---------------------------------- | ------------------------------------- | ------------------------------------- | ------------------------------- |
+| Select/Listbox | shadcn NativeSelect                | Existing feature filters and forms    | Section, status, course               | Keyboard and browser check      |
+| Date           | Native date input                  | Attendance API date fields            | Session date, history range           | Date validation tests           |
+| Form           | shadcn fields with React Hook Form | Feature schemas and API errors        | Create, edit, account                 | Form tests and browser check    |
+| Toast          | shadcn Sonner provider             | `app/providers.tsx`                   | Success, error                        | Interaction tests               |
+| Loading        | Shared LoadingState and Skeleton   | `src/components/ui/loading-state.tsx` | Page, compact                         | Accessible status check         |
+| CRUD           | Existing feature API modules       | `docs/API_INTEGRATION.md`             | Students, teachers, courses, sections | Feature tests and browser check |
 
 Native select and date popups follow the browser and operating system. InClass owns labels, selection state, validation, and the surrounding control style. All authenticated data remains scoped to the signed-in role.
 

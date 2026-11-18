@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -28,8 +29,7 @@ export default function TeacherDetailPage() {
         You are not authorized to view teacher accounts.
       </p>
     );
-  if (teacher.isLoading)
-    return <p className="text-sm text-zinc-500">Loading teacher…</p>;
+  if (teacher.isLoading) return <LoadingState label="Loading teacher" />;
   if (teacher.isError || !teacher.data)
     return (
       <p className="text-sm text-zinc-500">Unable to load this teacher.</p>
@@ -50,7 +50,7 @@ export default function TeacherDetailPage() {
       <div>
         <h2 className="font-semibold">Assigned sections</h2>
         {sections.isLoading ? (
-          <p className="mt-2 text-sm text-zinc-500">Loading sections…</p>
+          <LoadingState label="Loading sections" compact />
         ) : sections.data?.length ? (
           <ul className="mt-2 divide-y rounded-lg border border-zinc-200 dark:border-zinc-800">
             {sections.data.map((section) => (

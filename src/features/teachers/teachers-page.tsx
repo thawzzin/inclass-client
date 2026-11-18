@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Badge } from '@/src/components/ui/badge';
 
 import { Button } from '@/src/components/ui/button';
@@ -68,8 +69,7 @@ export function TeachersPage() {
         You are not authorized to manage teachers.
       </p>
     );
-  if (teachers.isLoading)
-    return <p className="text-sm text-zinc-500">Loading teachers…</p>;
+  if (teachers.isLoading) return <LoadingState label="Loading teachers" />;
   if (teachers.isError)
     return (
       <Button

@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Label } from '@/src/components/ui/label';
 
 import { Button } from '@/src/components/ui/button';
@@ -61,9 +62,7 @@ export function SectionAttendance({ sectionId }: { sectionId: string }) {
   });
 
   if (sessions.isLoading) {
-    return (
-      <p className="text-sm text-zinc-500">Loading attendance sessions…</p>
-    );
+    return <LoadingState label="Loading attendance sessions" compact />;
   }
   if (sessions.isError || !sessions.data) {
     return (

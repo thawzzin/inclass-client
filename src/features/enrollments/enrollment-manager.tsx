@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Label } from '@/src/components/ui/label';
 
 import { Button } from '@/src/components/ui/button';
@@ -79,7 +80,7 @@ export function EnrollmentManager({ sectionId }: { sectionId: string }) {
   });
 
   if (enrollments.isLoading)
-    return <p className="text-sm text-zinc-500">Loading enrolled students…</p>;
+    return <LoadingState label="Loading enrolled students" compact />;
   if (enrollments.isError || !enrollments.data)
     return (
       <Button
@@ -176,7 +177,7 @@ export function EnrollmentManager({ sectionId }: { sectionId: string }) {
           />
           <div className="mt-4 max-h-72 overflow-y-auto rounded-md border border-zinc-200 dark:border-zinc-800">
             {students.isLoading ? (
-              <p className="p-4 text-sm text-zinc-500">Loading students…</p>
+              <LoadingState label="Loading students" compact />
             ) : options.length ? (
               options.map((student) => (
                 <div

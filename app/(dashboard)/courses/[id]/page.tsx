@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -17,8 +18,7 @@ export default function CourseDetailPage() {
     queryKey: queryKeys.sections.all,
     queryFn: academicsApi.sections,
   });
-  if (course.isLoading)
-    return <p className="text-sm text-zinc-500">Loading course…</p>;
+  if (course.isLoading) return <LoadingState label="Loading course" />;
   if (course.isError || !course.data)
     return <p className="text-sm text-zinc-500">Unable to load this course.</p>;
   const related =
@@ -38,7 +38,7 @@ export default function CourseDetailPage() {
       <div>
         <h2 className="font-semibold">Sections</h2>
         {sections.isLoading ? (
-          <p className="mt-2 text-sm text-zinc-500">Loading sections…</p>
+          <LoadingState label="Loading sections" compact />
         ) : related.length ? (
           <ul className="mt-2 divide-y rounded-lg border border-zinc-200 dark:border-zinc-800">
             {related.map((section) => (

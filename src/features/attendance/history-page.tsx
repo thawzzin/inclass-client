@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { Button } from '@/src/components/ui/button';
 import { Alert, AlertDescription } from '@/src/components/ui/alert';
 
@@ -24,7 +25,7 @@ export function HistoryPage() {
         </div>
       </div>
       {sections.isLoading ? (
-        <p aria-busy="true">Loading sections…</p>
+        <LoadingState label="Loading sections" compact />
       ) : sections.isError ? (
         <Alert variant="destructive" className="ic-panel">
           <AlertDescription>Unable to load sections.</AlertDescription>

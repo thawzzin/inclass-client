@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
 
+import { LoadingState } from '@/src/components/ui/loading-state';
 import { useAuth } from '@/src/features/auth/auth-context';
 
 export function AuthGate({ children }: { children: ReactNode }) {
@@ -15,8 +16,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
   if (status !== 'authenticated') {
     return (
-      <main className="grid min-h-screen place-items-center text-sm text-zinc-500">
-        Restoring session…
+      <main className="grid min-h-screen place-items-center p-6">
+        <LoadingState label="Restoring session" compact className="w-64" />
       </main>
     );
   }

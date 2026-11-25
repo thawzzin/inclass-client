@@ -18,7 +18,7 @@ The application is a Next.js App Router project written in strict TypeScript. It
    pnpm install
    ```
 
-2. Configure and start `../inclass-backend` with `pnpm dev` on port 4000. Its `FRONTEND_URL` must match the frontend origin (`http://localhost:4001` for local development). In development, the frontend forwards `/api/v1/*` to the local backend; deployed Workers use a Service Binding.
+2. Copy `.env.example` to `.env` and set `NEXT_PUBLIC_API_URL` to the backend API base URL. Configure and start `../inclass-backend` with `pnpm dev` on port 4000. Its `FRONTEND_URL` must match the frontend origin (`http://localhost:4001` for local development).
 
 3. Start the frontend:
 
@@ -26,7 +26,7 @@ The application is a Next.js App Router project written in strict TypeScript. It
    pnpm dev
    ```
 
-Open [http://localhost:4001](http://localhost:4001). The proxied API health endpoint is [http://localhost:4001/api/v1/health](http://localhost:4001/api/v1/health).
+Open [http://localhost:4001](http://localhost:4001). The backend health endpoint is [http://localhost:4000/api/v1/health](http://localhost:4000/api/v1/health).
 
 ## Authentication and API integration
 
@@ -71,8 +71,8 @@ Tests use Vitest, React Testing Library, and verified backend-shaped fixtures. T
 
 - Install dependencies, then run `pnpm build:worker` to create the OpenNext Worker bundle. Run `pnpm preview:worker` for a local Workers preview and `pnpm deploy` to build and publish it. These commands use `wrangler.jsonc` and require Cloudflare authentication for deployment.
 - For Cloudflare Git deployment, use `pnpm build:worker` as the build command and `pnpm exec opennextjs-cloudflare deploy` as the deploy command so the build runs once.
-- The browser always uses `/api/v1`; remove any obsolete `NEXT_PUBLIC_API_URL` build variable.
-- Deploy the backend Worker first. This frontend's `API` Service Binding targets `inclass-backend`; `/api/v1/*` requests are forwarded to it and response cookies stay on the frontend's `workers.dev` origin.
+- Set `NEXT_PUBLIC_API_URL` to the backend's public HTTPS API base URL (for example, `https://inclass-backend.example.workers.dev/api/v1`) in the frontend **build** environment. Next.js embeds this value in browser code at build time, so set it separately for production and preview builds and rebuild after changing it. A Wrangler runtime variable does not change an existing browser bundle.
+- Deploy the backend Worker first. The browser sends credentialed requests directly to it. For frontend and backend on separate sites, the backend must issue `Secure; SameSite=None` auth and CSRF cookies; browsers that block third-party cookies may still prevent cross-site login. A shared site under a custom domain avoids that browser restriction.
 - Set backend `FRONTEND_URL` to the exact frontend `workers.dev` HTTPS origin.
 - Apply backend migrations before directing traffic to a new API release.
 - Run all frontend and backend quality gates in CI.

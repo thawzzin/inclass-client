@@ -1,4 +1,18 @@
-import { createApiClient, withCsrfHeader } from './client';
+import { createApiClient, getApiBaseUrl, withCsrfHeader } from './client';
+
+describe('getApiBaseUrl', () => {
+  it('uses the public backend URL from the build environment', () => {
+    vi.stubEnv('NEXT_PUBLIC_API_URL', 'https://api.example.com/api/v1');
+    expect(getApiBaseUrl()).toBe('https://api.example.com/api/v1');
+    vi.unstubAllEnvs();
+  });
+
+  it('requires a configured backend URL', () => {
+    vi.stubEnv('NEXT_PUBLIC_API_URL', '');
+    expect(() => getApiBaseUrl()).toThrow('NEXT_PUBLIC_API_URL');
+    vi.unstubAllEnvs();
+  });
+});
 
 describe('createApiClient', () => {
   it('uses credentials and sends the CSRF token only for state-changing requests', async () => {

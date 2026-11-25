@@ -44,5 +44,7 @@ export function createApiClient(
 }
 
 export function getApiBaseUrl(): string {
-  return '/api/v1';
+  const url = process.env.NEXT_PUBLIC_API_URL;
+  if (!url) throw new Error('NEXT_PUBLIC_API_URL must be set at build time');
+  return url;
 }

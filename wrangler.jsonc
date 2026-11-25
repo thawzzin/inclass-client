@@ -10,4 +10,9 @@
     "binding": "ASSETS",
   },
   "observability": { "enabled": true },
+  "previews": {
+    "vars": {
+      "NEXT_PUBLIC_API_URL": "https://dev-inclass-backend.thawzzin-dev.workers.dev/api/v1",
+    },
+  },
 }

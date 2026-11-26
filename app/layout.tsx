@@ -15,6 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: 'InClass',
     description: 'University attendance management',
     openGraph: {
+      url: `${protocol}://${host}/dashboard`,
       title: 'InClass',
       description: 'University attendance management',
       type: 'website',

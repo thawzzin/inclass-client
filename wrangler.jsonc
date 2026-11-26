@@ -11,7 +11,7 @@
   "observability": { "enabled": true },
   "previews": {
     "vars": {
-      "NEXT_PUBLIC_API_URL": "https://dev-inclass-backend.thawzzin-dev.workers.dev/api/v1",
+      "NEXT_PUBLIC_API_URL": "https://dev-inclass-backend.zetthedev.workers.dev/api/v1",
     },
   },
 }

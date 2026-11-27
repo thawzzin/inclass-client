@@ -76,7 +76,7 @@ export function TeachersPage() {
         type="button"
         onClick={() => void teachers.refetch()}
         variant="link"
-        className="text-sm underline"
+        className="text-sm underline cursor-pointer"
       >
         Unable to load teachers. Retry
       </Button>

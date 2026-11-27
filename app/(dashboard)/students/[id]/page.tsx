@@ -4,6 +4,7 @@ import { LoadingState } from '@/src/components/ui/loading-state';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 import { StudentAttendanceHistory } from '@/src/features/attendance/student-attendance-history';
 import { useAuth } from '@/src/features/auth/auth-context';
@@ -33,7 +34,11 @@ export default function StudentDetailPage() {
     );
   return (
     <section className="space-y-6">
-      <Link href="/students" className="text-sm underline">
+      <Link
+        href="/students"
+        className="inline-flex items-center gap-2 text-sm underline"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
         Back to students
       </Link>
       <div>

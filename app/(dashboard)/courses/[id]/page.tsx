@@ -4,6 +4,7 @@ import { LoadingState } from '@/src/components/ui/loading-state';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 import { academicsApi } from '@/src/features/academics/academics.api';
 import { queryKeys } from '@/src/lib/api/query-keys';
@@ -25,7 +26,11 @@ export default function CourseDetailPage() {
     sections.data?.filter((section) => section.courseId === id) ?? [];
   return (
     <section className="space-y-6">
-      <Link href="/courses" className="text-sm underline">
+      <Link
+        href="/courses"
+        className="inline-flex items-center gap-2 text-sm underline"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
         Back to courses
       </Link>
       <div>

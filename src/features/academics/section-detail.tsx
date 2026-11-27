@@ -11,6 +11,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
 
 import { queryKeys } from '@/src/lib/api/query-keys';
 import { SectionAttendance } from '@/src/features/attendance/section-attendance';
@@ -40,7 +41,11 @@ export function SectionDetail({
   const value = section.data;
   return (
     <section className="space-y-6">
-      <Link href="/sections" className="text-sm underline">
+      <Link
+        href="/sections"
+        className="inline-flex items-center gap-2 text-sm underline"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
         Back to sections
       </Link>
       <div>

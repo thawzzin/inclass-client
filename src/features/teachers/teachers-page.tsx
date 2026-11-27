@@ -40,7 +40,7 @@ export function TeachersPage() {
   const [editing, setEditing] = useState<Teacher>();
   const [passwordTeacher, setPasswordTeacher] = useState<Teacher>();
   const [creating, setCreating] = useState(false);
-  const params = teacherListParams({ page, pageSize: 20, search, status });
+  const params = teacherListParams({ page, pageSize: 10, search, status });
   const teachers = useQuery({
     queryKey: [...queryKeys.teachers.all, params],
     queryFn: () => teachersApi.list(params),
@@ -216,7 +216,10 @@ export function TeachersPage() {
         </Table>
       </div>
       <div className="flex items-center justify-between text-sm">
-        <span>{teachers.data.total} teachers</span>
+        <span>
+          {teachers.data.total} teachers · Page {page} of{' '}
+          {Math.max(teachers.data.totalPages, 1)}
+        </span>
         <div className="space-x-2">
           <Button
             type="button"

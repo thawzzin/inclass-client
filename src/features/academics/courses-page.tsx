@@ -31,6 +31,7 @@ export function CoursesPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Course>();
   const courses = useQuery({
@@ -68,6 +69,9 @@ export function CoursesPage() {
       </Button>
     );
   const visible = filterCourses(courses.data, search);
+  const totalPages = Math.ceil(visible.length / 10);
+  const currentPage = Math.min(page, Math.max(totalPages, 1));
+  const pageCourses = visible.slice((currentPage - 1) * 10, currentPage * 10);
   return (
     <section className="space-y-6">
       <div className="ic-page-heading">
@@ -89,7 +93,10 @@ export function CoursesPage() {
       <Input
         aria-label="Search courses"
         value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        onChange={(event) => {
+          setSearch(event.target.value);
+          setPage(1);
+        }}
         placeholder="Search code or name"
         className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700 max-w-xs"
       />
@@ -118,7 +125,7 @@ export function CoursesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {visible.map((course) => (
+            {pageCourses.map((course) => (
               <TableRow
                 key={course.id}
                 className="border-t border-zinc-200 dark:border-zinc-800"
@@ -169,6 +176,30 @@ export function CoursesPage() {
       {visible.length === 0 && (
         <p className="text-sm text-zinc-500">No courses match your search.</p>
       )}
+      <div className="flex items-center justify-between gap-3 text-sm">
+        <span>
+          {visible.length} {visible.length === 1 ? 'course' : 'courses'} · Page{' '}
+          {currentPage} of {Math.max(totalPages, 1)}
+        </span>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={currentPage <= 1}
+            onClick={() => setPage(currentPage - 1)}
+          >
+            Previous
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={currentPage >= totalPages}
+            onClick={() => setPage(currentPage + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </section>
   );
 }

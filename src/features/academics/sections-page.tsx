@@ -166,7 +166,7 @@ export function SectionsPage() {
                   type="button"
                   onClick={() => setEditing(section)}
                   variant="link"
-                  className="underline"
+                  className="underline p-0"
                 >
                   Edit
                 </Button>

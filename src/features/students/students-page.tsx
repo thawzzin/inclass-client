@@ -37,7 +37,7 @@ export function StudentsPage() {
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<Student | null>(null);
   const [creating, setCreating] = useState(false);
-  const params = toStudentQuery({ page, pageSize: 20, search, status });
+  const params = toStudentQuery({ page, pageSize: 10, search, status });
   const students = useQuery({
     queryKey: [...queryKeys.students.all, params],
     queryFn: () => studentsApi.list(params),
@@ -195,7 +195,9 @@ export function StudentsPage() {
         </Table>
       </div>
       <div className="flex items-center justify-between text-sm">
-        <span>{data.total} students</span>
+        <span>
+          {data.total} students · Page {page} of {Math.max(data.totalPages, 1)}
+        </span>
         <div className="space-x-2">
           <Button
             type="button"

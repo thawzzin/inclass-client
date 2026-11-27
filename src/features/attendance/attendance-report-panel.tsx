@@ -60,7 +60,7 @@ export function AttendanceReportPanel({
     dateTo: '',
     status: '',
     page: 1,
-    pageSize: 20,
+    pageSize: 10,
   });
   const validRange = isAttendanceDateRangeValid(
     filters.dateFrom,

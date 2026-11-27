@@ -59,7 +59,7 @@ export function SectionDetail({
         <TabsList
           variant="line"
           aria-label="Section details"
-          className="mb-5 border-b border-zinc-200 dark:border-zinc-800"
+          className="mb-5 px-5 border-b border-zinc-200 dark:border-zinc-800"
         >
           {(['overview', 'students', 'attendance'] as const).map((item) => (
             <TabsTrigger key={item} value={item} className="capitalize">
